@@ -1,0 +1,21 @@
+artifact_path: "/Users/nicolashidalgo/Documents/ANDES/DE\u0301CIMO SEMESTRE/Anali\u0301\
+  tica computacional para la toma de decisiones/Proyecto/Proyecto_2/Tarea4_modelos/mlruns/466925387486523083/models/m-febb161bdc2f4dc283a48795701b9569/artifacts"
+flavors:
+  keras:
+    data: data
+    keras_backend: tensorflow
+    keras_version: 3.13.2
+    save_exported_model: false
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.keras
+    python_version: 3.12.10
+mlflow_version: 3.12.0
+model_id: m-febb161bdc2f4dc283a48795701b9569
+model_size_bytes: 37812
+model_uuid: m-febb161bdc2f4dc283a48795701b9569
+prompts: null
+run_id: a9e2476a0c744a4b8856b9bd3de76162
+utc_time_created: '2026-05-21 05:41:16.958903'

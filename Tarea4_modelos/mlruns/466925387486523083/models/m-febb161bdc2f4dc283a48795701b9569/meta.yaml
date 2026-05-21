@@ -1,0 +1,11 @@
+artifact_location: /Users/nicolashidalgo/Documents/ANDES/DÉCIMO SEMESTRE/Analítica
+  computacional para la toma de decisiones/Proyecto/Proyecto_2/Tarea4_modelos/mlruns/466925387486523083/models/m-febb161bdc2f4dc283a48795701b9569/artifacts
+creation_timestamp: 1779342076948
+experiment_id: '466925387486523083'
+last_updated_timestamp: 1779342084432
+model_id: m-febb161bdc2f4dc283a48795701b9569
+model_type: null
+name: model
+source_run_id: a9e2476a0c744a4b8856b9bd3de76162
+status: 2
+status_message: null
