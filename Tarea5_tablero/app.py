@@ -1,9 +1,9 @@
 # =============================================================================
 # PROYECTO 2 - TABLERO DE MODELOS PREDICTIVOS SABER 11 - HUILA
-# Juan Nicolás Hidalgo Parra / Juan Sebastián Méndez Martínez
+# Responsable tablero: Juan Nicolás Hidalgo Parra / Juan Sebastián Méndez Martínez
 # =============================================================================
 
-# ── Librerías ──────────────────────────────────────────────────────────────────
+import os
 import dash
 from dash import dcc, html, Input, Output, State
 import pandas as pd
@@ -14,32 +14,31 @@ from tensorflow.keras.models import load_model
 
 # =============================================================================
 # 1. CARGA DE MODELOS Y TRANSFORMADORES
-# Todos los modelos se cargan al inicio para no repetir la carga en cada
-# predicción. 
-# 
-# Los archivos deben estar en la carpeta modelos/
 # =============================================================================
 
-# ── Modelo de regresión (Pregunta 1 - Nicolás) ────────────────────────────────
-modelo_regresion   = load_model('modelos/modelo_regresion.keras')
-scaler_X_reg       = joblib.load('modelos/scaler_X_regresion.pkl')
-scaler_y_reg       = joblib.load('modelos/scaler_y_regresion.pkl')
-municipio_encoder  = joblib.load('modelos/municipio_encoder.pkl')
+BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
+MODELOS_DIR = os.path.join(BASE_DIR, 'modelos')
 
-# ── Modelo clasificación 1 (Pregunta 2 - Gabriel) ─────────────────────────────
-# TODO: descomentar cuando el modelo esté listo
-# modelo_clasificacion_1 = load_model('modelos/modelo_clasificacion_1.keras')
-# scaler_X_clas1         = joblib.load('modelos/scaler_X_clasificacion_1.pkl')
+# Pregunta Nicolás
+modelo_regresion  = load_model(os.path.join(MODELOS_DIR, 'modelo_regresion.keras'))
+scaler_X_reg      = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_regresion.pkl'))
+scaler_y_reg      = joblib.load(os.path.join(MODELOS_DIR, 'scaler_y_regresion.pkl'))
+municipio_encoder = joblib.load(os.path.join(MODELOS_DIR, 'municipio_encoder.pkl'))
 
-# ── Modelo clasificación 2 (Pregunta 3 - Sebastián) ───────────────────────────
-# TODO: descomentar cuando el modelo esté listo
-# modelo_clasificacion_2 = load_model('modelos/modelo_clasificacion_2.keras')
-# scaler_X_clas2         = joblib.load('modelos/scaler_X_clasificacion_2.pkl')
+# TODO: descomentar cuando los modelos estén listos
 
-# ── Constantes del departamento (para contextualizar resultados) ───────────────
-PROMEDIO_HUILA    = 250  # Pendiente actualizar con el valor real
-MUNICIPIOS_COUNT  = 37 # Pendiente actualizar con el valor real
-ESTUDIANTES_COUNT = 100  # Pendiente actualizar con el valor real
+# Pregunta Gabriel
+# modelo_clasificacion_1 = load_model(os.path.join(MODELOS_DIR, 'modelo_clasificacion_1.keras'))
+# scaler_X_clas1         = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_clasificacion_1.pkl'))
+
+# Pregunta Sebastián
+# modelo_clasificacion_2 = load_model(os.path.join(MODELOS_DIR, 'modelo_clasificacion_2.keras'))
+# scaler_X_clas2         = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_clasificacion_2.pkl'))
+
+# Actualizar con valores reales del dataset
+PROMEDIO_HUILA    = 250.0
+MUNICIPIOS_COUNT  = 37
+ESTUDIANTES_COUNT = 80283
 
 # =============================================================================
 # 2. OPCIONES DE LOS FORMULARIOS
@@ -56,42 +55,23 @@ opciones_estrato = [
 ]
 
 opciones_educacion = [
-    {'label': 'Ninguno',                           'value': 0},
-    {'label': 'Primaria incompleta',               'value': 1},
-    {'label': 'Primaria completa',                 'value': 2},
-    {'label': 'Secundaria incompleta',             'value': 3},
-    {'label': 'Secundaria completa',               'value': 4},
-    {'label': 'Técnica o tecnológica incompleta',  'value': 5},
-    {'label': 'Técnica o tecnológica completa',    'value': 6},
-    {'label': 'Profesional incompleta',            'value': 7},
-    {'label': 'Profesional completa',              'value': 8},
-    {'label': 'Postgrado',                         'value': 9},
+    {'label': 'Ninguno',                          'value': 0},
+    {'label': 'Primaria incompleta',              'value': 1},
+    {'label': 'Primaria completa',                'value': 2},
+    {'label': 'Secundaria incompleta',            'value': 3},
+    {'label': 'Secundaria completa',              'value': 4},
+    {'label': 'Técnica o tecnológica incompleta', 'value': 5},
+    {'label': 'Técnica o tecnológica completa',   'value': 6},
+    {'label': 'Profesional incompleta',           'value': 7},
+    {'label': 'Profesional completa',             'value': 8},
+    {'label': 'Postgrado',                        'value': 9},
 ]
 
-opciones_zona = [
-    {'label': 'Urbano', 'value': 1},
-    {'label': 'Rural',  'value': 0},
-]
-
-opciones_internet = [
-    {'label': 'Sí', 'value': 1},
-    {'label': 'No', 'value': 0},
-]
-
-opciones_computador = [
-    {'label': 'Sí', 'value': 1},
-    {'label': 'No', 'value': 0},
-]
-
-opciones_naturaleza = [
-    {'label': 'Oficial',     'value': 0},
-    {'label': 'No Oficial',  'value': 1},
-]
-
-opciones_genero = [
-    {'label': 'Masculino',  'value': 1},
-    {'label': 'Femenino',   'value': 0},
-]
+opciones_zona        = [{'label': 'Urbano', 'value': 1}, {'label': 'Rural',      'value': 0}]
+opciones_internet    = [{'label': 'Sí',     'value': 1}, {'label': 'No',         'value': 0}]
+opciones_computador  = [{'label': 'Sí',     'value': 1}, {'label': 'No',         'value': 0}]
+opciones_naturaleza  = [{'label': 'Oficial','value': 0}, {'label': 'No Oficial', 'value': 1}]
+opciones_genero      = [{'label': 'Masculino', 'value': 1}, {'label': 'Femenino','value': 0}]
 
 opciones_jornada = [
     {'label': 'Completa',  'value': 'COMPLETA'},
@@ -111,12 +91,12 @@ opciones_municipio = [
 # 3. ESTILOS
 # =============================================================================
 
-ESTILO_FONDO  = '#0d0f1a'
+ESTILO_FONDO   = '#0d0f1a'
 ESTILO_TARJETA = '#111827'
-ESTILO_BORDE     = '#0f3460'
-COLOR_ACENTO     = '#00d4ff'
-COLOR_TEXTO      = '#e0e0e0'
-COLOR_SUBTEXTO   = '#9aa5b4'
+ESTILO_BORDE   = '#0f3460'
+COLOR_ACENTO   = '#00d4ff'
+COLOR_TEXTO    = '#e0e0e0'
+COLOR_SUBTEXTO = '#9aa5b4'
 
 estilo_label = {
     'color': COLOR_SUBTEXTO,
@@ -126,47 +106,32 @@ estilo_label = {
     'fontWeight': '500'
 }
 
-estilo_dropdown = {
-    'marginBottom': '12px',
-    'backgroundColor': '#1a2340',
+estilo_tarjeta = {
+    'backgroundColor': ESTILO_TARJETA,
+    'border': f'1px solid {ESTILO_BORDE}',
+    'borderRadius': '12px',
+    'padding': '24px',
 }
 
-estilo_tarjeta = {
-    'color': '#ffffff',
-    'backgroundColor': '#1a2340',
-}
+# Estilo base de todos los dropdowns
+dd = {'marginBottom': '12px'}
 
 # =============================================================================
-# 4. FUNCIONES DE COMPONENTES
+# 4. COMPONENTES REUTILIZABLES
 # =============================================================================
 
 def kpi_card(valor, etiqueta):
     return html.Div([
-        html.P(valor, style={
-            'color': COLOR_ACENTO,
-            'margin': '0',
-            'fontSize': '22px',
-            'fontWeight': 'bold'
-        }),
-        html.P(etiqueta, style={
-            'color': COLOR_SUBTEXTO,
-            'margin': '2px 0 0 0',
-            'fontSize': '11px',
-            'textTransform': 'uppercase',
-            'letterSpacing': '0.5px'
-        })
-    ], style={
-        **estilo_tarjeta,
-        'width': '22%',
-        'display': 'inline-block',
-        'textAlign': 'center',
-        'margin': '0 1.5%',
-        'padding': '14px 20px',
-    })
+        html.P(valor, style={'color': COLOR_ACENTO, 'margin': '0',
+                             'fontSize': '22px', 'fontWeight': 'bold'}),
+        html.P(etiqueta, style={'color': COLOR_SUBTEXTO, 'margin': '2px 0 0 0',
+                                'fontSize': '11px', 'textTransform': 'uppercase',
+                                'letterSpacing': '0.5px'})
+    ], style={**estilo_tarjeta, 'width': '22%', 'display': 'inline-block',
+              'textAlign': 'center', 'margin': '0 1.5%', 'padding': '14px 20px'})
 
 
 def seccion_pregunta(texto):
-    """Genera el bloque de texto con la pregunta de negocio."""
     return html.Div([
         html.P('Pregunta de negocio', style={'color': COLOR_ACENTO, 'fontSize': '12px',
                                              'textTransform': 'uppercase', 'margin': '0 0 6px 0'}),
@@ -184,18 +149,33 @@ def instrucciones(texto):
 
 
 def placeholder_modelo(nombre_responsable, pregunta):
-    """Muestra un placeholder para modelos aún no integrados."""
     return html.Div([
         html.Div('⏳', style={'fontSize': '48px', 'textAlign': 'center', 'marginBottom': '16px'}),
-        html.H3(f'Modelo en desarrollo', style={'textAlign': 'center', 'color': COLOR_ACENTO}),
+        html.H3('Modelo en desarrollo', style={'textAlign': 'center', 'color': COLOR_ACENTO}),
         html.P(pregunta, style={'textAlign': 'center', 'color': COLOR_SUBTEXTO,
                                 'maxWidth': '600px', 'margin': '0 auto 16px auto'}),
         html.P(f'Responsable: {nombre_responsable}',
                style={'textAlign': 'center', 'color': COLOR_SUBTEXTO, 'fontSize': '13px'})
     ], style={**estilo_tarjeta, 'padding': '60px 24px'})
 
+
+def dropdown(id_, opciones, valor):
+    return dcc.Dropdown(
+        id=id_,
+        options=opciones,
+        value=valor,
+        clearable=False,
+        style={
+            'marginBottom': '12px',
+            'backgroundColor': '#1a2340',
+            'border': '1px solid #00d4ff',
+            'borderRadius': '6px',
+        },
+        className='custom-dd'
+    )
+
 # =============================================================================
-# 5. LAYOUT DEL TABLERO
+# 5. APP Y CSS
 # =============================================================================
 
 app = dash.Dash(__name__, title='Modelos Predictivos Saber 11 - Huila')
@@ -208,85 +188,101 @@ app.index_string = '''
         <title>{%title%}</title>
         {%favicon%}
         {%css%}
-       <style>
-            body { background-color: #0d0f1a !important; }
+        <style>
+            body { background-color: #0d0f1a !important; font-family: Arial, sans-serif; }
 
-            /* React-Select v5 — Dash 4.x */
-            div[class$="-control"] {
+            /* ── Dropdown Dash 4.x (clases reales) ── */
+            .dash-dropdown-trigger {
                 background-color: #1a2340 !important;
-                border-color: #00d4ff !important;
-            }
-            div[class$="-singleValue"] {
-                color: #ffffff !important;
-                font-size: 14px !important;
-            }
-            div[class$="-placeholder"] {
-                color: #cccccc !important;
-                font-size: 14px !important;
-            }
-            div[class$="-Input"] input {
-                color: #ffffff !important;
-            }
-            div[class$="-menu"] {
-                background-color: #111827 !important;
                 border: 1px solid #00d4ff !important;
-                z-index: 9999 !important;
+                border-radius: 6px !important;
+                min-height: 38px !important;
             }
-            div[class$="-option"] {
-                background-color: #111827 !important;
+            .dash-dropdown-value,
+            .dash-dropdown-value-item {
                 color: #ffffff !important;
-                font-size: 14px !important;
+                font-size: 13px !important;
             }
-            div[class$="-option"]:hover {
-                background-color: #1a2340 !important;
+            .dash-dropdown-placeholder {
+                color: #aaaaaa !important;
+                font-size: 13px !important;
+            }
+            .dash-dropdown-trigger-icon,
+            .dash-dropdown-search-icon {
                 color: #00d4ff !important;
-            }
-            div[class$="-MenuList"] {
-                background-color: #111827 !important;
-            }
-            div[class$="-IndicatorsContainer"] svg {
                 fill: #00d4ff !important;
             }
-            div[class$="-ValueContainer"] {
+            .dash-dropdown-content,
+            .dash-dropdown-options {
+                background-color: #111827 !important;
+                border: 1px solid #00d4ff !important;
+                border-radius: 6px !important;
+            }
+            .dash-dropdown-option {
+                background-color: #111827 !important;
                 color: #ffffff !important;
+                font-size: 13px !important;
+            }
+            .dash-dropdown-option:hover {
+                background-color: #1a2340 !important;
+                color: #00d4ff !important;
+            }
+            .dash-dropdown-search,
+            .dash-dropdown-search-container {
+                background-color: #111827 !important;
+                color: #ffffff !important;
+            }
+            .dash-dropdown-search input {
+                color: #ffffff !important;
+                background-color: #1a2340 !important;
+            }
+            .dash-dropdown-clear {
+                color: #00d4ff !important;
             }
 
-            /* Tabs */
-            .dash-tab {
-                background-color: #111827 !important;
-                color: #9aa5b4 !important;
-                border: 1px solid #0f3460 !important;
-            }
-            .dash-tab--selected {
-                background-color: #0f3460 !important;
-                color: #00d4ff !important;
-                border-bottom: 2px solid #00d4ff !important;
-            }
-            .custom-dropdown .Select-control,
-            .custom-dropdown .Select-value,
-            .custom-dropdown .Select-value-label,
-            .custom-dropdown input,
-            .custom-dropdown .Select-single-value,
-            .custom-dropdown [class*="singleValue"],
-            .custom-dropdown [class*="control"],
-            .custom-dropdown [class*="ValueContainer"] {
-                background-color: #1a2340 !important;
-                color: #ffffff !important;
-                font-size: 14px !important;
-            }
-            .custom-dropdown [class*="menu"],
-            .custom-dropdown [class*="MenuList"] {
-                background-color: #111827 !important;
-            }
-            .custom-dropdown [class*="option"] {
-                background-color: #111827 !important;
-                color: #ffffff !important;
-            }
-            .custom-dropdown [class*="option"]:hover {
-                background-color: #1a2340 !important;
-                color: #00d4ff !important;
-            }
+            /* ── Tabs ── */
+            .dash-tab { background-color: #111827 !important; color: #9aa5b4 !important; border: 1px solid #0f3460 !important; }
+            .dash-tab--selected { background-color: #0f3460 !important; color: #00d4ff !important; border-bottom: 2px solid #00d4ff !important; }
         </style>
+        <script>
+        function fixDropdowns() {
+            document.querySelectorAll('.custom-dd').forEach(function(dd) {
+                dd.querySelectorAll('div').forEach(function(el) {
+                    var cn = el.className || '';
+                    if (typeof cn !== 'string') return;
+                    // Fondo del control
+                    if (cn.match(/control|ValueContainer|container/i)) {
+                        el.style.setProperty('background-color', '#1a2340', 'important');
+                        el.style.setProperty('border-color', '#00d4ff', 'important');
+                    }
+                    // Color del texto seleccionado
+                    if (cn.match(/singleValue|placeholder|value/i)) {
+                        el.style.setProperty('color', '#ffffff', 'important');
+                        el.style.setProperty('font-size', '13px', 'important');
+                    }
+                    // Input de búsqueda
+                    if (cn.match(/Input/)) {
+                        el.style.setProperty('color', '#ffffff', 'important');
+                    }
+                    // Menú desplegable
+                    if (cn.match(/menu|MenuList|option/i)) {
+                        el.style.setProperty('background-color', '#111827', 'important');
+                        el.style.setProperty('color', '#ffffff', 'important');
+                    }
+                });
+                // Input directo
+                dd.querySelectorAll('input').forEach(function(inp) {
+                    inp.style.setProperty('color', '#ffffff', 'important');
+                });
+                // SVG de la flecha
+                dd.querySelectorAll('svg').forEach(function(svg) {
+                    svg.style.setProperty('fill', '#00d4ff', 'important');
+                });
+            });
+        }
+        // Corre cada 150ms para capturar cambios de React
+        setInterval(fixDropdowns, 150);
+        </script>
     </head>
     <body>
         {%app_entry%}
@@ -299,25 +295,25 @@ app.index_string = '''
 </html>
 '''
 
+# =============================================================================
+# 6. LAYOUT
+# =============================================================================
+
 app.layout = html.Div([
 
     # ── Encabezado ──────────────────────────────────────────────────────────────
     html.Div([
         html.H1('Modelos Predictivos Saber 11 — Huila',
                 style={'color': COLOR_TEXTO, 'fontSize': '32px',
-                    'margin': '0 0 6px 0', 'fontWeight': 'bold',
-                    'textAlign': 'center'}),
+                       'margin': '0 0 6px 0', 'fontWeight': 'bold',
+                       'textAlign': 'center'}),
         html.P('Secretaría de Educación del Huila · Proyecto 2 · 2026',
-            style={'color': COLOR_SUBTEXTO, 'fontSize': '17px',
-                    'margin': '0 0 6px 0', 'textAlign': 'center'}),
-        html.P(id='reloj',
-            style={'color': COLOR_ACENTO, 'fontSize': '12px',
-                    'margin': 0, 'textAlign': 'center'}),
-    ], style={
-        'marginBottom': '24px',
-        'paddingBottom': '16px',
-        'borderBottom': f'1px solid {ESTILO_BORDE}'
-    }),
+               style={'color': COLOR_SUBTEXTO, 'fontSize': '19px',
+                      'margin': '0 0 6px 0', 'textAlign': 'center'}),
+        html.P(id='reloj', style={'color': COLOR_ACENTO, 'fontSize': '12px',
+                                  'margin': 0, 'textAlign': 'center'}),
+    ], style={'marginBottom': '24px', 'paddingBottom': '16px',
+              'borderBottom': f'1px solid {ESTILO_BORDE}'}),
 
     dcc.Interval(id='intervalo-reloj', interval=1000, n_intervals=0),
 
@@ -332,7 +328,7 @@ app.layout = html.Div([
     dcc.Tabs(id='tabs-principales', value='tab-1', children=[
 
         # ══════════════════════════════════════════════════════════════════════
-        # PESTAÑA 1 — PREGUNTA 1 (Nicolás): Regresión puntaje global
+        # PESTAÑA 1 — Regresión puntaje global (Nicolás)
         # ══════════════════════════════════════════════════════════════════════
         dcc.Tab(label='Pregunta 1 — Puntaje Global', value='tab-1', children=[
             html.Div([
@@ -348,137 +344,94 @@ app.layout = html.Div([
                     'con base en variables de contexto.'
                 ),
 
-                # ── Formulario + Resultado ──────────────────────────────────
                 html.Div([
 
-                # Formulario de entrada
-                html.Div([
-                    html.H4('Perfil del Estudiante',
-                            style={'color': COLOR_ACENTO, 'marginBottom': '20px',
-                                'fontSize': '13px', 'textTransform': 'uppercase',
-                                'letterSpacing': '1px'}),
-
-                    html.Label('Estrato socioeconómico', style=estilo_label),
-                    dcc.Dropdown(
-                        id='reg-estrato',
-                        options=opciones_estrato,
-                        value=1,
-                        clearable=False,
-                        style={
-                            'marginBottom': '12px',
-                            'backgroundColor': '#1a2340',
-                            'color': '#ffffff',
-                        },
-                        className='custom-dropdown'
-                    ),
-
-                    html.Label('Zona del colegio', style=estilo_label),
-                    dcc.Dropdown(id='reg-zona', options=opciones_zona,
-                                value=1, clearable=False, style=estilo_dropdown),
-
-                    html.Label('Nivel educativo de la madre', style=estilo_label),
-                    dcc.Dropdown(id='reg-edu-madre', options=opciones_educacion,
-                                value=4, clearable=False, style=estilo_dropdown),
-
-                    html.Label('Nivel educativo del padre', style=estilo_label),
-                    dcc.Dropdown(id='reg-edu-padre', options=opciones_educacion,
-                                value=4, clearable=False, style=estilo_dropdown),
-
-                    html.Label('Jornada escolar', style=estilo_label),
-                    dcc.Dropdown(id='reg-jornada', options=opciones_jornada,
-                                value='MAÑANA', clearable=False, style=estilo_dropdown),
-
-                    html.Label('Municipio', style=estilo_label),
-                    dcc.Dropdown(id='reg-municipio', options=opciones_municipio,
-                                value=list(municipio_encoder.values())[0],
-                                clearable=False, style=estilo_dropdown),
-
-                    html.Label('Acceso a internet en el hogar', style=estilo_label),
-                    dcc.Dropdown(id='reg-internet', options=opciones_internet,
-                                value=1, clearable=False, style=estilo_dropdown),
-
-                    html.Label('Acceso a computador en el hogar', style=estilo_label),
-                    dcc.Dropdown(id='reg-computador', options=opciones_computador,
-                                value=1, clearable=False, style=estilo_dropdown),
-
-                    html.Label('Naturaleza del colegio', style=estilo_label),
-                    dcc.Dropdown(id='reg-naturaleza', options=opciones_naturaleza,
-                                value=0, clearable=False, style=estilo_dropdown),
-
-                    html.Label('Género', style=estilo_label),
-                    dcc.Dropdown(id='reg-genero', options=opciones_genero,
-                                value=1, clearable=False, style=estilo_dropdown),
-
+                    # ── Formulario ─────────────────────────────────────────
                     html.Div([
-                        html.Button('Predecir', id='btn-predecir-reg', style={
-                            'backgroundColor': COLOR_ACENTO,
-                            'color': '#000',
-                            'border': 'none',
-                            'padding': '12px 28px',
-                            'borderRadius': '6px',
-                            'cursor': 'pointer',
-                            'fontWeight': 'bold',
-                            'fontSize': '14px',
-                            'marginRight': '10px'
-                        }),
-                        html.Button('Limpiar', id='btn-limpiar-reg', style={
-                            'backgroundColor': 'transparent',
-                            'color': COLOR_SUBTEXTO,
-                            'border': f'1px solid {ESTILO_BORDE}',
-                            'padding': '12px 28px',
-                            'borderRadius': '6px',
-                            'cursor': 'pointer',
-                            'fontSize': '14px'
-                        }),
-                    ], style={'marginTop': '8px'})
+                        html.H4('Perfil del Estudiante',
+                                style={'color': COLOR_ACENTO, 'marginBottom': '20px',
+                                       'fontSize': '13px', 'textTransform': 'uppercase',
+                                       'letterSpacing': '1px'}),
 
-                ], style={
-                    **estilo_tarjeta,
-                    'flex': '0 0 380px',
-                    'minWidth': '300px',
-                }),
+                        html.Label('Estrato socioeconómico', style=estilo_label),
+                        dropdown('reg-estrato', opciones_estrato, 1),
 
-                # Panel de resultado
-                html.Div([
-                    html.H4('Resultado de la Predicción',
-                            style={'color': COLOR_ACENTO, 'marginBottom': '24px',
-                                'fontSize': '13px', 'textTransform': 'uppercase',
-                                'letterSpacing': '1px'}),
+                        html.Label('Zona del colegio', style=estilo_label),
+                        dropdown('reg-zona', opciones_zona, 1),
 
-                    html.Div(id='resultado-regresion', children=[
-                        html.P('Complete el formulario y presione Predecir.',
-                            style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
-                                    'marginTop': '80px', 'fontSize': '14px'})
-                    ]),
+                        html.Label('Nivel educativo de la madre', style=estilo_label),
+                        dropdown('reg-edu-madre', opciones_educacion, 4),
 
-                    # El gauge solo aparece después de predecir, empieza oculto
-                    html.Div(id='gauge-container', children=[
-                        dcc.Graph(id='gauge-regresion',
-                                config={'displayModeBar': False},
-                                style={'height': '250px', 'marginTop': '10px'})
-                    ], style={'display': 'none'}),
+                        html.Label('Nivel educativo del padre', style=estilo_label),
+                        dropdown('reg-edu-padre', opciones_educacion, 4),
 
-                    html.Div(id='interpretacion-regresion', style={'marginTop': '16px'})
+                        html.Label('Jornada escolar', style=estilo_label),
+                        dropdown('reg-jornada', opciones_jornada, 'MAÑANA'),
 
-                ], style={
-                    **estilo_tarjeta,
-                    'flex': '1',
-                    'minWidth': '300px',
-                })
+                        html.Label('Municipio', style=estilo_label),
+                        dropdown('reg-municipio', opciones_municipio,
+                                 list(municipio_encoder.values())[0]),
 
-            ], style={
-                'display': 'flex',
-                'flexDirection': 'row',
-                'gap': '20px',
-                'alignItems': 'flex-start',
-                'flexWrap': 'wrap'
-            })
+                        html.Label('Acceso a internet en el hogar', style=estilo_label),
+                        dropdown('reg-internet', opciones_internet, 1),
+
+                        html.Label('Acceso a computador en el hogar', style=estilo_label),
+                        dropdown('reg-computador', opciones_computador, 1),
+
+                        html.Label('Naturaleza del colegio', style=estilo_label),
+                        dropdown('reg-naturaleza', opciones_naturaleza, 0),
+
+                        html.Label('Género', style=estilo_label),
+                        dropdown('reg-genero', opciones_genero, 1),
+
+                        html.Div([
+                            html.Button('Predecir', id='btn-predecir-reg', style={
+                                'backgroundColor': COLOR_ACENTO, 'color': '#000',
+                                'border': 'none', 'padding': '12px 28px',
+                                'borderRadius': '6px', 'cursor': 'pointer',
+                                'fontWeight': 'bold', 'fontSize': '14px',
+                                'marginRight': '10px'
+                            }),
+                            html.Button('Limpiar', id='btn-limpiar-reg', style={
+                                'backgroundColor': 'transparent', 'color': COLOR_SUBTEXTO,
+                                'border': f'1px solid {ESTILO_BORDE}', 'padding': '12px 28px',
+                                'borderRadius': '6px', 'cursor': 'pointer', 'fontSize': '14px'
+                            }),
+                        ], style={'marginTop': '8px'})
+
+                    ], style={**estilo_tarjeta, 'flex': '0 0 380px', 'minWidth': '300px'}),
+
+                    # ── Panel de resultado ──────────────────────────────────
+                    html.Div([
+                        html.H4('Resultado de la Predicción',
+                                style={'color': COLOR_ACENTO, 'marginBottom': '24px',
+                                       'fontSize': '13px', 'textTransform': 'uppercase',
+                                       'letterSpacing': '1px'}),
+
+                        html.Div(id='resultado-regresion', children=[
+                            html.P('Complete el formulario y presione Predecir.',
+                                   style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+                                          'marginTop': '80px', 'fontSize': '14px'})
+                        ]),
+
+                        html.Div(id='gauge-container', children=[
+                            dcc.Graph(id='gauge-regresion',
+                                      config={'displayModeBar': False},
+                                      style={'height': '250px', 'marginTop': '10px'})
+                        ], style={'display': 'none'}),
+
+                        html.Div(id='interpretacion-regresion', style={'marginTop': '16px'})
+
+                    ], style={**estilo_tarjeta, 'flex': '1', 'minWidth': '300px'})
+
+                ], style={'display': 'flex', 'flexDirection': 'row',
+                          'gap': '20px', 'alignItems': 'flex-start', 'flexWrap': 'wrap'})
 
             ], style={'padding': '20px'})
         ]),
 
         # ══════════════════════════════════════════════════════════════════════
-        # PESTAÑA 2 — PREGUNTA 2 (Gabriel): Clasificación riesgo académico
+        # PESTAÑA 2 — Clasificación riesgo académico (Gabriel)
         # ══════════════════════════════════════════════════════════════════════
         dcc.Tab(label='Pregunta 2 — Riesgo Académico', value='tab-2', children=[
             html.Div([
@@ -494,7 +447,7 @@ app.layout = html.Div([
         ]),
 
         # ══════════════════════════════════════════════════════════════════════
-        # PESTAÑA 3 — PREGUNTA 3 (Sebastián): Clasificación jornada vulnerable
+        # PESTAÑA 3 — Clasificación jornada vulnerable (Sebastián)
         # ══════════════════════════════════════════════════════════════════════
         dcc.Tab(label='Pregunta 3 — Jornada Vulnerable', value='tab-3', children=[
             html.Div([
@@ -509,51 +462,42 @@ app.layout = html.Div([
             ], style={'padding': '20px'})
         ]),
 
-    ], colors={
-        'background': ESTILO_FONDO,
-        'border': ESTILO_BORDE,
-        'primary': COLOR_ACENTO
-    })
+    ], colors={'background': ESTILO_FONDO, 'border': ESTILO_BORDE, 'primary': COLOR_ACENTO})
 
-], style={
-    'backgroundColor': ESTILO_FONDO,
-    'color': COLOR_TEXTO,
-    'minHeight': '100vh',
-    'padding': '30px',
-    'fontFamily': 'Arial, sans-serif'
-})
+], style={'backgroundColor': ESTILO_FONDO, 'color': COLOR_TEXTO,
+          'minHeight': '100vh', 'padding': '30px', 'fontFamily': 'Arial, sans-serif'})
 
 # =============================================================================
-# 6. CALLBACKS
+# 7. CALLBACKS
 # =============================================================================
 
 @app.callback(
-    Output('resultado-regresion',     'children'),
-    Output('gauge-regresion',         'figure'),
-    Output('interpretacion-regresion','children'),
-    Output('gauge-container',         'style'),
-    Output('reg-estrato',             'value'),
-    Output('reg-zona',                'value'),
-    Output('reg-edu-madre',           'value'),
-    Output('reg-edu-padre',           'value'),
-    Output('reg-jornada',             'value'),
-    Output('reg-municipio',           'value'),
-    Output('reg-internet',            'value'),
-    Output('reg-computador',          'value'),
-    Output('reg-naturaleza',          'value'),
-    Output('reg-genero',              'value'),
-    Input('btn-predecir-reg',         'n_clicks'),
-    Input('btn-limpiar-reg',          'n_clicks'),
-    State('reg-estrato',              'value'),
-    State('reg-zona',                 'value'),
-    State('reg-edu-madre',            'value'),
-    State('reg-edu-padre',            'value'),
-    State('reg-jornada',              'value'),
-    State('reg-municipio',            'value'),
-    State('reg-internet',             'value'),
-    State('reg-computador',           'value'),
-    State('reg-naturaleza',           'value'),
-    State('reg-genero',               'value'),
+    Output('resultado-regresion',      'children'),
+    Output('gauge-regresion',          'figure'),
+    Output('interpretacion-regresion', 'children'),
+    Output('gauge-container',          'style'),
+    Output('reg-estrato',              'value'),
+    Output('reg-zona',                 'value'),
+    Output('reg-edu-madre',            'value'),
+    Output('reg-edu-padre',            'value'),
+    Output('reg-jornada',              'value'),
+    Output('reg-municipio',            'value'),
+    Output('reg-internet',             'value'),
+    Output('reg-computador',           'value'),
+    Output('reg-naturaleza',           'value'),
+    Output('reg-genero',               'value'),
+    Input('btn-predecir-reg',          'n_clicks'),
+    Input('btn-limpiar-reg',           'n_clicks'),
+    State('reg-estrato',               'value'),
+    State('reg-zona',                  'value'),
+    State('reg-edu-madre',             'value'),
+    State('reg-edu-padre',             'value'),
+    State('reg-jornada',               'value'),
+    State('reg-municipio',             'value'),
+    State('reg-internet',              'value'),
+    State('reg-computador',            'value'),
+    State('reg-naturaleza',            'value'),
+    State('reg-genero',                'value'),
     prevent_initial_call=True
 )
 def manejar_formulario(n_predecir, n_limpiar,
@@ -561,26 +505,14 @@ def manejar_formulario(n_predecir, n_limpiar,
                        jornada, municipio, internet, computador,
                        naturaleza, genero):
 
-    # Valores por defecto del formulario
     defaults = (1, 1, 4, 4, 'MAÑANA',
                 list(municipio_encoder.values())[0], 1, 1, 0, 1)
 
-    # Figura vacía para el gauge cuando no hay predicción
     figura_vacia = go.Figure()
     figura_vacia.update_layout(
-        paper_bgcolor=ESTILO_TARJETA,
-        plot_bgcolor=ESTILO_TARJETA,
-        margin=dict(l=20, r=20, t=20, b=20),
-        height=220,
-        xaxis={'visible': False},
-        yaxis={'visible': False},
-        annotations=[{
-            'text': 'El resultado aparecerá aquí',
-            'xref': 'paper', 'yref': 'paper',
-            'x': 0.5, 'y': 0.5,
-            'showarrow': False,
-            'font': {'color': COLOR_SUBTEXTO, 'size': 13}
-        }]
+        paper_bgcolor=ESTILO_TARJETA, plot_bgcolor=ESTILO_TARJETA,
+        margin=dict(l=20, r=20, t=20, b=20), height=220,
+        xaxis={'visible': False}, yaxis={'visible': False}
     )
 
     mensaje_vacio = html.P(
@@ -589,32 +521,28 @@ def manejar_formulario(n_predecir, n_limpiar,
                'marginTop': '80px', 'fontSize': '14px'}
     )
 
-    # ── Si se presionó Limpiar ─────────────────────────────────────────────────
+    # ── Limpiar ───────────────────────────────────────────────────────────────
     ctx = dash.callback_context
     if ctx.triggered[0]['prop_id'] == 'btn-limpiar-reg.n_clicks':
         return (mensaje_vacio, figura_vacia, html.Div(),
-        {'display': 'none'}, *defaults)
+                {'display': 'none'}, *defaults)
 
-    # ── Si se presionó Predecir ────────────────────────────────────────────────
-    jornada_mañana   = 1 if jornada == 'MAÑANA'   else 0
-    jornada_noche    = 1 if jornada == 'NOCHE'     else 0
-    jornada_sabatina = 1 if jornada == 'SABATINA'  else 0
-    jornada_tarde    = 1 if jornada == 'TARDE'     else 0
-    jornada_unica    = 1 if jornada == 'UNICA'     else 0
-
+    # ── Predecir ──────────────────────────────────────────────────────────────
     features = np.array([[
         estrato, zona, edu_madre, edu_padre, municipio,
         internet, computador, naturaleza, genero,
-        jornada_mañana, jornada_noche, jornada_sabatina,
-        jornada_tarde, jornada_unica
+        1 if jornada == 'MAÑANA'   else 0,
+        1 if jornada == 'NOCHE'    else 0,
+        1 if jornada == 'SABATINA' else 0,
+        1 if jornada == 'TARDE'    else 0,
+        1 if jornada == 'UNICA'    else 0,
     ]])
 
     features_scaled = scaler_X_reg.transform(features)
     pred_scaled     = modelo_regresion.predict(features_scaled, verbose=0).flatten()
-    pred_real       = scaler_y_reg.inverse_transform(
-                          pred_scaled.reshape(-1, 1)
-                      ).flatten()[0]
-    pred_real = round(float(pred_real), 1)
+    pred_real       = float(scaler_y_reg.inverse_transform(
+                         pred_scaled.reshape(-1, 1)).flatten()[0])
+    pred_real       = round(pred_real, 1)
 
     diferencia = pred_real - PROMEDIO_HUILA
     color_dif  = '#00c48c' if diferencia >= 0 else '#ff6b6b'
@@ -627,7 +555,7 @@ def manejar_formulario(n_predecir, n_limpiar,
         html.H2(f'{pred_real} pts',
                 style={'color': COLOR_TEXTO, 'fontSize': '48px',
                        'textAlign': 'center', 'margin': '0 0 8px 0'}),
-        html.P(f'{signo}{diferencia:.1f} pts vs promedio departamental ({PROMEDIO_HUILA} pts)',
+        html.P(f'{signo}{diferencia:.1f} pts vs promedio departamental ({PROMEDIO_HUILA:.0f} pts)',
                style={'color': color_dif, 'textAlign': 'center',
                       'fontSize': '14px', 'margin': 0})
     ])
@@ -646,36 +574,25 @@ def manejar_formulario(n_predecir, n_limpiar,
                 {'range': [200, 300], 'color': '#1a2a1a'},
                 {'range': [300, 500], 'color': '#1a3a1a'},
             ],
-            'threshold': {
-                'line': {'color': '#ffcc00', 'width': 3},
-                'thickness': 0.75,
-                'value': PROMEDIO_HUILA
-            }
+            'threshold': {'line': {'color': '#ffcc00', 'width': 3},
+                          'thickness': 0.75, 'value': PROMEDIO_HUILA}
         }
     ))
-    gauge.update_layout(
-        paper_bgcolor=ESTILO_TARJETA,
-        font={'color': COLOR_TEXTO},
-        margin=dict(l=20, r=20, t=20, b=20),
-        height=220
-    )
+    gauge.update_layout(paper_bgcolor=ESTILO_TARJETA, font={'color': COLOR_TEXTO},
+                        margin=dict(l=20, r=20, t=20, b=20), height=220)
 
     if pred_real >= PROMEDIO_HUILA + 20:
-        msg   = 'El estudiante presenta un perfil favorable. Se proyecta un desempeño destacado frente al promedio departamental.'
-        color = '#00c48c'
-        icono = '✅'
+        msg, color, icono = ('El estudiante presenta un perfil favorable. Se proyecta un desempeño destacado frente al promedio departamental.',
+                             '#00c48c', '✅')
     elif pred_real >= PROMEDIO_HUILA:
-        msg   = 'El estudiante se proyecta por encima del promedio departamental. Condiciones socioeconómicas adecuadas para un desempeño satisfactorio.'
-        color = COLOR_ACENTO
-        icono = '📊'
+        msg, color, icono = ('El estudiante se proyecta por encima del promedio departamental. Condiciones socioeconómicas adecuadas para un desempeño satisfactorio.',
+                             COLOR_ACENTO, '📊')
     elif pred_real >= PROMEDIO_HUILA - 20:
-        msg   = 'El estudiante se proyecta ligeramente por debajo del promedio. Se recomienda seguimiento y apoyo pedagógico focalizado.'
-        color = '#ffcc00'
-        icono = '⚠️'
+        msg, color, icono = ('El estudiante se proyecta ligeramente por debajo del promedio. Se recomienda seguimiento y apoyo pedagógico focalizado.',
+                             '#ffcc00', '⚠️')
     else:
-        msg   = 'El perfil del estudiante indica alto riesgo de bajo rendimiento. Se recomienda priorizar intervención temprana.'
-        color = '#ff6b6b'
-        icono = '🔴'
+        msg, color, icono = ('El perfil del estudiante indica alto riesgo de bajo rendimiento. Se recomienda priorizar intervención temprana.',
+                             '#ff6b6b', '🔴')
 
     interpretacion_div = html.Div([
         html.Span(f'{icono}  '),
@@ -683,11 +600,11 @@ def manejar_formulario(n_predecir, n_limpiar,
     ], style={'padding': '12px 16px', 'backgroundColor': '#0d0f1a',
               'borderRadius': '8px', 'borderLeft': f'3px solid {color}'})
 
-    # Retorna resultado + valores actuales del formulario sin cambio
     return (resultado_div, gauge, interpretacion_div,
-        {'display': 'block'},
-        estrato, zona, edu_madre, edu_padre, jornada,
-        municipio, internet, computador, naturaleza, genero)
+            {'display': 'block'},
+            estrato, zona, edu_madre, edu_padre, jornada,
+            municipio, internet, computador, naturaleza, genero)
+
 
 @app.callback(
     Output('reloj', 'children'),
@@ -695,11 +612,11 @@ def manejar_formulario(n_predecir, n_limpiar,
 )
 def actualizar_reloj(n):
     from datetime import datetime
-    ahora = datetime.now()
-    return ahora.strftime('%A %d de %B de %Y  |  %H:%M:%S')
+    return datetime.now().strftime('%A %d de %B de %Y  |  %H:%M:%S')
+
 
 # =============================================================================
-# 7. EJECUCIÓN DEL SERVIDOR
+# 8. EJECUCIÓN
 # =============================================================================
 if __name__ == '__main__':
     app.run(debug=True)
