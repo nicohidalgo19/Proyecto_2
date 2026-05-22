@@ -186,3 +186,216 @@ def placeholder_modelo(nombre_responsable, pregunta):
         html.P(f'Responsable: {nombre_responsable}',
                style={'textAlign': 'center', 'color': COLOR_SUBTEXTO, 'fontSize': '13px'})
     ], style={**estilo_tarjeta, 'padding': '60px 24px'})
+
+# =============================================================================
+# 5. LAYOUT DEL TABLERO
+# =============================================================================
+
+app = dash.Dash(__name__, title='Modelos Predictivos Saber 11 - Huila')
+
+app.layout = html.Div([
+
+    # ── Encabezado ──────────────────────────────────────────────────────────────
+    html.Div([
+        html.H1('Modelos Predictivos Saber 11 — Huila',
+                style={'textAlign': 'center', 'color': COLOR_TEXTO,
+                       'fontSize': '26px', 'margin': '0 0 4px 0'}),
+        html.P('Secretaría de Educación del Huila · Proyecto 2 · 2026',
+               style={'textAlign': 'center', 'color': COLOR_SUBTEXTO,
+                      'fontSize': '13px', 'margin': 0})
+    ], style={'marginBottom': '30px'}),
+
+    # ── KPIs ────────────────────────────────────────────────────────────────────
+    html.Div([
+        kpi_card(f'{PROMEDIO_HUILA:.1f} pts', 'Promedio Global Huila'),
+        kpi_card(str(MUNICIPIOS_COUNT),        'Municipios Analizados'),
+        kpi_card(f'{ESTUDIANTES_COUNT:,}',     'Estudiantes en el Dataset'),
+    ], style={'textAlign': 'center', 'marginBottom': '30px'}),
+
+    # ── Pestañas ────────────────────────────────────────────────────────────────
+    dcc.Tabs(id='tabs-principales', value='tab-1', children=[
+
+        # ══════════════════════════════════════════════════════════════════════
+        # PESTAÑA 1 — PREGUNTA 1 (Nicolás): Regresión puntaje global
+        # ══════════════════════════════════════════════════════════════════════
+        dcc.Tab(label='Pregunta 1 — Puntaje Global', value='tab-1', children=[
+            html.Div([
+
+                seccion_pregunta(
+                    '¿Cuál es el puntaje global esperado de un estudiante dado su estrato '
+                    'socioeconómico, zona geográfica, nivel educativo de los padres y jornada escolar?'
+                ),
+
+                instrucciones(
+                    'Complete el perfil socioeconómico e institucional del estudiante y presione '
+                    '"Predecir". El modelo estimará el puntaje global esperado en la prueba Saber 11 '
+                    'con base en variables de contexto.'
+                ),
+
+                # ── Formulario + Resultado ──────────────────────────────────
+                html.Div([
+
+                    # Formulario de entrada
+                    html.Div([
+                        html.H4('Perfil del Estudiante',
+                                style={'color': COLOR_ACENTO, 'marginBottom': '20px',
+                                       'fontSize': '15px', 'textTransform': 'uppercase',
+                                       'letterSpacing': '1px'}),
+
+                        html.Label('Estrato socioeconómico', style=estilo_label),
+                        dcc.Dropdown(id='reg-estrato', options=opciones_estrato,
+                                     value=1, clearable=False,
+                                     style=estilo_dropdown),
+
+                        html.Label('Zona del colegio', style=estilo_label),
+                        dcc.Dropdown(id='reg-zona', options=opciones_zona,
+                                     value=1, clearable=False,
+                                     style=estilo_dropdown),
+
+                        html.Label('Nivel educativo de la madre', style=estilo_label),
+                        dcc.Dropdown(id='reg-edu-madre', options=opciones_educacion,
+                                     value=4, clearable=False,
+                                     style=estilo_dropdown),
+
+                        html.Label('Nivel educativo del padre', style=estilo_label),
+                        dcc.Dropdown(id='reg-edu-padre', options=opciones_educacion,
+                                     value=4, clearable=False,
+                                     style=estilo_dropdown),
+
+                        html.Label('Jornada escolar', style=estilo_label),
+                        dcc.Dropdown(id='reg-jornada', options=opciones_jornada,
+                                     value='MAÑANA', clearable=False,
+                                     style=estilo_dropdown),
+
+                        html.Label('Municipio', style=estilo_label),
+                        dcc.Dropdown(id='reg-municipio', options=opciones_municipio,
+                                     value=list(municipio_encoder.values())[0],
+                                     clearable=False, style=estilo_dropdown),
+
+                        html.Label('Acceso a internet en el hogar', style=estilo_label),
+                        dcc.Dropdown(id='reg-internet', options=opciones_internet,
+                                     value=1, clearable=False,
+                                     style=estilo_dropdown),
+
+                        html.Label('Acceso a computador en el hogar', style=estilo_label),
+                        dcc.Dropdown(id='reg-computador', options=opciones_computador,
+                                     value=1, clearable=False,
+                                     style=estilo_dropdown),
+
+                        html.Label('Naturaleza del colegio', style=estilo_label),
+                        dcc.Dropdown(id='reg-naturaleza', options=opciones_naturaleza,
+                                     value=0, clearable=False,
+                                     style=estilo_dropdown),
+
+                        html.Label('Género', style=estilo_label),
+                        dcc.Dropdown(id='reg-genero', options=opciones_genero,
+                                     value=1, clearable=False,
+                                     style=estilo_dropdown),
+
+                        # Botones
+                        html.Div([
+                            html.Button('Predecir', id='btn-predecir-reg',
+                                        style={
+                                            'backgroundColor': COLOR_ACENTO,
+                                            'color': '#000',
+                                            'border': 'none',
+                                            'padding': '12px 28px',
+                                            'borderRadius': '6px',
+                                            'cursor': 'pointer',
+                                            'fontWeight': 'bold',
+                                            'fontSize': '14px',
+                                            'marginRight': '10px'
+                                        }),
+                            html.Button('Limpiar', id='btn-limpiar-reg',
+                                        style={
+                                            'backgroundColor': 'transparent',
+                                            'color': COLOR_SUBTEXTO,
+                                            'border': f'1px solid {ESTILO_BORDE}',
+                                            'padding': '12px 28px',
+                                            'borderRadius': '6px',
+                                            'cursor': 'pointer',
+                                            'fontSize': '14px'
+                                        }),
+                        ], style={'marginTop': '8px'})
+
+                    ], style={**estilo_tarjeta, 'width': '38%',
+                              'display': 'inline-block', 'verticalAlign': 'top'}),
+
+                    # Panel de resultado
+                    html.Div([
+                        html.H4('Resultado de la Predicción',
+                                style={'color': COLOR_ACENTO, 'marginBottom': '24px',
+                                       'fontSize': '15px', 'textTransform': 'uppercase',
+                                       'letterSpacing': '1px'}),
+
+                        # Valor predicho
+                        html.Div(id='resultado-regresion', children=[
+                            html.P('Complete el formulario y presione Predecir.',
+                                   style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+                                          'marginTop': '60px'})
+                        ]),
+
+                        # Gauge chart
+                        dcc.Graph(id='gauge-regresion',
+                                  config={'displayModeBar': False},
+                                  style={'height': '250px', 'marginTop': '10px'}),
+
+                        # Texto de interpretación
+                        html.Div(id='interpretacion-regresion',
+                                 style={'marginTop': '16px'})
+
+                    ], style={**estilo_tarjeta, 'width': '52%',
+                              'display': 'inline-block', 'verticalAlign': 'top',
+                              'marginLeft': '3%'})
+
+                ], style={'display': 'flex', 'alignItems': 'flex-start',
+                          'gap': '0', 'flexWrap': 'wrap'})
+
+            ], style={'padding': '20px'})
+        ]),
+
+        # ══════════════════════════════════════════════════════════════════════
+        # PESTAÑA 2 — PREGUNTA 2 (Gabriel): Clasificación riesgo académico
+        # ══════════════════════════════════════════════════════════════════════
+        dcc.Tab(label='Pregunta 2 — Riesgo Académico', value='tab-2', children=[
+            html.Div([
+                seccion_pregunta(
+                    '¿Un estudiante estará por debajo del promedio departamental dado su '
+                    'perfil socioeconómico y municipio?'
+                ),
+                placeholder_modelo(
+                    'Gabriel Juan De Dios',
+                    'Modelo de clasificación binaria: bajo el promedio departamental / sobre el promedio.'
+                )
+            ], style={'padding': '20px'})
+        ]),
+
+        # ══════════════════════════════════════════════════════════════════════
+        # PESTAÑA 3 — PREGUNTA 3 (Sebastián): Clasificación jornada vulnerable
+        # ══════════════════════════════════════════════════════════════════════
+        dcc.Tab(label='Pregunta 3 — Jornada Vulnerable', value='tab-3', children=[
+            html.Div([
+                seccion_pregunta(
+                    '¿Es posible predecir si un estudiante asiste a jornada nocturna o sabatina '
+                    'a partir de su perfil socioeconómico y municipio?'
+                ),
+                placeholder_modelo(
+                    'Juan Sebastián Méndez Martínez',
+                    'Modelo de clasificación binaria: jornada regular / jornada nocturna o sabatina.'
+                )
+            ], style={'padding': '20px'})
+        ]),
+
+    ], colors={
+        'background': ESTILO_FONDO,
+        'border': ESTILO_BORDE,
+        'primary': COLOR_ACENTO
+    })
+
+], style={
+    'backgroundColor': ESTILO_FONDO,
+    'color': COLOR_TEXTO,
+    'minHeight': '100vh',
+    'padding': '30px',
+    'fontFamily': 'Arial, sans-serif'
+})
