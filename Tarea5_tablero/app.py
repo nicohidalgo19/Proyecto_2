@@ -40,3 +40,69 @@ municipio_encoder  = joblib.load('modelos/municipio_encoder.pkl')
 PROMEDIO_HUILA    = 0  # Pendiente actualizar con el valor real
 MUNICIPIOS_COUNT  = 37 # Pendiente actualizar con el valor real
 ESTUDIANTES_COUNT = 0  # Pendiente actualizar con el valor real
+
+# =============================================================================
+# 2. OPCIONES DE LOS FORMULARIOS
+# =============================================================================
+
+opciones_estrato = [
+    {'label': 'Sin Estrato', 'value': 0},
+    {'label': 'Estrato 1',   'value': 1},
+    {'label': 'Estrato 2',   'value': 2},
+    {'label': 'Estrato 3',   'value': 3},
+    {'label': 'Estrato 4',   'value': 4},
+    {'label': 'Estrato 5',   'value': 5},
+    {'label': 'Estrato 6',   'value': 6},
+]
+
+opciones_educacion = [
+    {'label': 'Ninguno',                           'value': 0},
+    {'label': 'Primaria incompleta',               'value': 1},
+    {'label': 'Primaria completa',                 'value': 2},
+    {'label': 'Secundaria incompleta',             'value': 3},
+    {'label': 'Secundaria completa',               'value': 4},
+    {'label': 'Técnica o tecnológica incompleta',  'value': 5},
+    {'label': 'Técnica o tecnológica completa',    'value': 6},
+    {'label': 'Profesional incompleta',            'value': 7},
+    {'label': 'Profesional completa',              'value': 8},
+    {'label': 'Postgrado',                         'value': 9},
+]
+
+opciones_zona = [
+    {'label': 'Urbano', 'value': 1},
+    {'label': 'Rural',  'value': 0},
+]
+
+opciones_internet = [
+    {'label': 'Sí', 'value': 1},
+    {'label': 'No', 'value': 0},
+]
+
+opciones_computador = [
+    {'label': 'Sí', 'value': 1},
+    {'label': 'No', 'value': 0},
+]
+
+opciones_naturaleza = [
+    {'label': 'Oficial',     'value': 0},
+    {'label': 'No Oficial',  'value': 1},
+]
+
+opciones_genero = [
+    {'label': 'Masculino',  'value': 1},
+    {'label': 'Femenino',   'value': 0},
+]
+
+opciones_jornada = [
+    {'label': 'Completa',  'value': 'COMPLETA'},
+    {'label': 'Mañana',    'value': 'MAÑANA'},
+    {'label': 'Tarde',     'value': 'TARDE'},
+    {'label': 'Única',     'value': 'UNICA'},
+    {'label': 'Nocturna',  'value': 'NOCHE'},
+    {'label': 'Sabatina',  'value': 'SABATINA'},
+]
+
+opciones_municipio = [
+    {'label': mun, 'value': val}
+    for mun, val in sorted(municipio_encoder.items(), key=lambda x: x[0])
+]
