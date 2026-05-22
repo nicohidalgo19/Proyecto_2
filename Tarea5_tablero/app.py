@@ -177,12 +177,11 @@ def seccion_pregunta(texto):
 
 
 def instrucciones(texto):
-    """Genera un bloque de instrucciones de uso."""
     return html.Div([
         html.Span('ℹ️  ', style={'fontSize': '16px'}),
-        html.Span(texto, style={'color': COLOR_SUBTEXTO, 'fontSize': '14px'})
+        html.Span(texto, style={'color': '#ffffff', 'fontSize': '14px'})
     ], style={'marginBottom': '20px', 'padding': '12px 16px',
-              'backgroundColor': '#1a2a2a', 'borderRadius': '8px',
+              'backgroundColor': '#1a2a3a', 'borderRadius': '8px',
               'borderLeft': f'3px solid {COLOR_ACENTO}'})
 
 
@@ -219,12 +218,17 @@ app.index_string = '''
             }
             .Select-value-label {
                 color: #ffffff !important;
-                font-size: 13px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
             }
             .Select-placeholder {
                 color: #ffffff !important;
+                font-size: 14px !important;
             }
             .Select-input input {
+                color: #ffffff !important;
+            }
+            .Select-single-value {
                 color: #ffffff !important;
             }
             .Select-menu-outer {
@@ -278,31 +282,23 @@ app.layout = html.Div([
 
     # ── Encabezado ──────────────────────────────────────────────────────────────
     html.Div([
-    html.Div([
         html.H1('Modelos Predictivos Saber 11 — Huila',
                 style={'color': COLOR_TEXTO, 'fontSize': '22px',
-                       'margin': '0 0 4px 0', 'fontWeight': 'bold'}),
+                    'margin': '0 0 4px 0', 'fontWeight': 'bold',
+                    'textAlign': 'center'}),
         html.P('Secretaría de Educación del Huila · Proyecto 2 · 2026',
-               style={'color': COLOR_SUBTEXTO, 'fontSize': '12px', 'margin': 0})
-    ]),
-    html.Div([
+            style={'color': COLOR_SUBTEXTO, 'fontSize': '12px',
+                    'margin': '0 0 6px 0', 'textAlign': 'center'}),
         html.P(id='reloj',
-               style={'color': COLOR_ACENTO, 'fontSize': '13px',
-                      'margin': 0, 'textAlign': 'right'}),
-        html.P('Universidad de los Andes',
-               style={'color': COLOR_SUBTEXTO, 'fontSize': '11px',
-                      'margin': '2px 0 0 0', 'textAlign': 'right'})
-    ])
+            style={'color': COLOR_ACENTO, 'fontSize': '12px',
+                    'margin': 0, 'textAlign': 'center'}),
     ], style={
-    'display': 'flex',
-    'justifyContent': 'space-between',
-    'alignItems': 'center',
-    'marginBottom': '24px',
-    'paddingBottom': '16px',
-    'borderBottom': f'1px solid {ESTILO_BORDE}'
+        'marginBottom': '24px',
+        'paddingBottom': '16px',
+        'borderBottom': f'1px solid {ESTILO_BORDE}'
     }),
 
-dcc.Interval(id='intervalo-reloj', interval=1000, n_intervals=0),
+    dcc.Interval(id='intervalo-reloj', interval=1000, n_intervals=0),
 
     # ── KPIs ────────────────────────────────────────────────────────────────────
     html.Div([
@@ -535,24 +531,21 @@ def manejar_formulario(n_predecir, n_limpiar,
                 list(municipio_encoder.values())[0], 1, 1, 0, 1)
 
     # Figura vacía para el gauge cuando no hay predicción
-    figura_vacia = go.Figure(go.Indicator(
-        mode='gauge',
-        value=0,
-        gauge={
-            'axis': {'range': [100, 500], 'tickcolor': COLOR_SUBTEXTO},
-            'bar': {'color': ESTILO_BORDE},
-            'bgcolor': ESTILO_TARJETA,
-            'steps': [
-                {'range': [100, 200], 'color': '#1a1a2e'},
-                {'range': [200, 300], 'color': '#1a1a2e'},
-                {'range': [300, 500], 'color': '#1a1a2e'},
-            ],
-        }
-    ))
+    figura_vacia = go.Figure()
     figura_vacia.update_layout(
         paper_bgcolor=ESTILO_TARJETA,
+        plot_bgcolor=ESTILO_TARJETA,
         margin=dict(l=20, r=20, t=20, b=20),
-        height=220
+        height=220,
+        xaxis={'visible': False},
+        yaxis={'visible': False},
+        annotations=[{
+            'text': 'El resultado aparecerá aquí',
+            'xref': 'paper', 'yref': 'paper',
+            'x': 0.5, 'y': 0.5,
+            'showarrow': False,
+            'font': {'color': COLOR_SUBTEXTO, 'size': 13}
+        }]
     )
 
     mensaje_vacio = html.P(
