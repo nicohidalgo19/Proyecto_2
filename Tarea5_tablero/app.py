@@ -25,3 +25,13 @@ modelo_regresion   = load_model('modelos/modelo_regresion.keras')
 scaler_X_reg       = joblib.load('modelos/scaler_X_regresion.pkl')
 scaler_y_reg       = joblib.load('modelos/scaler_y_regresion.pkl')
 municipio_encoder  = joblib.load('modelos/municipio_encoder.pkl')
+
+# ── Modelo clasificación 1 (Pregunta 2 - Gabriel) ─────────────────────────────
+# TODO: descomentar cuando el modelo esté listo
+# modelo_clasificacion_1 = load_model('modelos/modelo_clasificacion_1.keras')
+# scaler_X_clas1         = joblib.load('modelos/scaler_X_clasificacion_1.pkl')
+
+# ── Modelo clasificación 2 (Pregunta 3 - Sebastián) ───────────────────────────
+# TODO: descomentar cuando el modelo esté listo
+# modelo_clasificacion_2 = load_model('modelos/modelo_clasificacion_2.keras')
+# scaler_X_clas2         = joblib.load('modelos/scaler_X_clasificacion_2.pkl')
