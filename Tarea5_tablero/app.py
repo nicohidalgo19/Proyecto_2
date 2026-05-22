@@ -399,3 +399,162 @@ app.layout = html.Div([
     'padding': '30px',
     'fontFamily': 'Arial, sans-serif'
 })
+
+# =============================================================================
+# 6. CALLBACKS
+# =============================================================================
+
+@app.callback(
+    Output('resultado-regresion',    'children'),
+    Output('gauge-regresion',        'figure'),
+    Output('interpretacion-regresion','children'),
+    Input('btn-predecir-reg',        'n_clicks'),
+    State('reg-estrato',             'value'),
+    State('reg-zona',                'value'),
+    State('reg-edu-madre',           'value'),
+    State('reg-edu-padre',           'value'),
+    State('reg-jornada',             'value'),
+    State('reg-municipio',           'value'),
+    State('reg-internet',            'value'),
+    State('reg-computador',          'value'),
+    State('reg-naturaleza',          'value'),
+    State('reg-genero',              'value'),
+    prevent_initial_call=True
+)
+def predecir_regresion(n_clicks, estrato, zona, edu_madre, edu_padre,
+                       jornada, municipio, internet, computador, naturaleza, genero):
+    """
+    Callback principal del modelo de regresión.
+    Toma los valores del formulario, construye el vector de features,
+    aplica el pipeline de transformación y retorna la predicción.
+    """
+
+    # ── Construcción del vector de features ───────────────────────────────────
+    # El orden debe coincidir exactamente con las columnas guardadas en la sección 7:
+    # ['estrato','area_colegio','educacion_madre','educacion_padre','municipio',
+    #  'tiene_internet','tiene_computador','naturaleza_colegio','genero',
+    #  'jornada_MAÑANA','jornada_NOCHE','jornada_SABATINA','jornada_TARDE','jornada_UNICA']
+
+    jornada_mañana  = 1 if jornada == 'MAÑANA'   else 0
+    jornada_noche   = 1 if jornada == 'NOCHE'     else 0
+    jornada_sabatina= 1 if jornada == 'SABATINA'  else 0
+    jornada_tarde   = 1 if jornada == 'TARDE'     else 0
+    jornada_unica   = 1 if jornada == 'UNICA'     else 0
+    # COMPLETA es la categoría de referencia (drop_first=True): todos en 0
+
+    features = np.array([[
+        estrato,
+        zona,
+        edu_madre,
+        edu_padre,
+        municipio,      # ya está en escala de target encoding
+        internet,
+        computador,
+        naturaleza,
+        genero,
+        jornada_mañana,
+        jornada_noche,
+        jornada_sabatina,
+        jornada_tarde,
+        jornada_unica
+    ]])
+
+    # ── Pipeline de predicción ─────────────────────────────────────────────────
+    features_scaled = scaler_X_reg.transform(features)
+    pred_scaled     = modelo_regresion.predict(features_scaled, verbose=0).flatten()
+    pred_real       = scaler_y_reg.inverse_transform(
+                          pred_scaled.reshape(-1, 1)
+                      ).flatten()[0]
+
+    pred_real = round(float(pred_real), 1)
+
+    # ── Componente de valor predicho ──────────────────────────────────────────
+    diferencia = pred_real - PROMEDIO_HUILA
+    color_dif  = '#00c48c' if diferencia >= 0 else '#ff6b6b'
+    signo      = '+' if diferencia >= 0 else ''
+
+    resultado_div = html.Div([
+        html.P('Puntaje Global Estimado',
+               style={'color': COLOR_SUBTEXTO, 'fontSize': '13px',
+                      'textAlign': 'center', 'margin': '0 0 8px 0'}),
+        html.H2(f'{pred_real} pts',
+                style={'color': COLOR_TEXTO, 'fontSize': '48px',
+                       'textAlign': 'center', 'margin': '0 0 8px 0'}),
+        html.P(f'{signo}{diferencia:.1f} pts vs promedio departamental ({PROMEDIO_HUILA} pts)',
+               style={'color': color_dif, 'textAlign': 'center',
+                      'fontSize': '14px', 'margin': 0})
+    ])
+
+    # ── Gauge chart ───────────────────────────────────────────────────────────
+    gauge = go.Figure(go.Indicator(
+        mode='gauge+number',
+        value=pred_real,
+        number={'suffix': ' pts', 'font': {'color': COLOR_TEXTO}},
+        gauge={
+            'axis': {'range': [100, 500], 'tickcolor': COLOR_SUBTEXTO,
+                     'tickfont': {'color': COLOR_SUBTEXTO}},
+            'bar': {'color': COLOR_ACENTO},
+            'bgcolor': ESTILO_TARJETA,
+            'steps': [
+                {'range': [100, 200], 'color': '#3a1a1a'},
+                {'range': [200, 300], 'color': '#1a2a1a'},
+                {'range': [300, 500], 'color': '#1a3a1a'},
+            ],
+            'threshold': {
+                'line': {'color': '#ffcc00', 'width': 3},
+                'thickness': 0.75,
+                'value': PROMEDIO_HUILA
+            }
+        }
+    ))
+    gauge.update_layout(
+        paper_bgcolor=ESTILO_TARJETA,
+        font={'color': COLOR_TEXTO},
+        margin=dict(l=20, r=20, t=20, b=20),
+        height=220
+    )
+
+    # ── Texto de interpretación ───────────────────────────────────────────────
+    if pred_real >= PROMEDIO_HUILA + 20:
+        msg    = 'El estudiante presenta un perfil favorable. Se proyecta un desempeño destacado frente al promedio departamental.'
+        color  = '#00c48c'
+        icono  = '✅'
+    elif pred_real >= PROMEDIO_HUILA:
+        msg    = 'El estudiante se proyecta por encima del promedio departamental. Condiciones socioeconómicas adecuadas para un desempeño satisfactorio.'
+        color  = '#00adb5'
+        icono  = '📊'
+    elif pred_real >= PROMEDIO_HUILA - 20:
+        msg    = 'El estudiante se proyecta ligeramente por debajo del promedio. Se recomienda seguimiento y apoyo pedagógico focalizado.'
+        color  = '#ffcc00'
+        icono  = '⚠️'
+    else:
+        msg    = 'El perfil del estudiante indica alto riesgo de bajo rendimiento. Se recomienda priorizar intervención temprana por parte de la Secretaría.'
+        color  = '#ff6b6b'
+        icono  = '🔴'
+
+    interpretacion_div = html.Div([
+        html.Span(f'{icono}  ', style={'fontSize': '16px'}),
+        html.Span(msg, style={'color': COLOR_SUBTEXTO, 'fontSize': '14px'})
+    ], style={'padding': '12px 16px', 'backgroundColor': '#1a1a1a',
+              'borderRadius': '8px', 'borderLeft': f'3px solid {color}'})
+
+    return resultado_div, gauge, interpretacion_div
+
+
+@app.callback(
+    Output('reg-estrato',    'value'),
+    Output('reg-zona',       'value'),
+    Output('reg-edu-madre',  'value'),
+    Output('reg-edu-padre',  'value'),
+    Output('reg-jornada',    'value'),
+    Output('reg-municipio',  'value'),
+    Output('reg-internet',   'value'),
+    Output('reg-computador', 'value'),
+    Output('reg-naturaleza', 'value'),
+    Output('reg-genero',     'value'),
+    Input('btn-limpiar-reg', 'n_clicks'),
+    prevent_initial_call=True
+)
+def limpiar_formulario(n_clicks):
+    """Restaura todos los dropdowns del formulario a sus valores por defecto."""
+    return 1, 1, 4, 4, 'MAÑANA', list(municipio_encoder.values())[0], 1, 1, 0, 1
