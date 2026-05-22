@@ -138,3 +138,51 @@ estilo_tarjeta = {
     'borderRadius': '10px',
     'padding': '24px',
 }
+
+# =============================================================================
+# 4. FUNCIONES DE COMPONENTES
+# =============================================================================
+
+def kpi_card(valor, etiqueta):
+    """Genera una tarjeta KPI con valor destacado y etiqueta descriptiva."""
+    return html.Div([
+        html.H2(valor, style={'color': COLOR_ACENTO, 'margin': '0', 'fontSize': '32px'}),
+        html.P(etiqueta, style={'color': COLOR_SUBTEXTO, 'margin': '4px 0 0 0', 'fontSize': '13px'})
+    ], style={
+        **estilo_tarjeta,
+        'width': '28%',
+        'display': 'inline-block',
+        'textAlign': 'center',
+        'margin': '0 2%'
+    })
+
+
+def seccion_pregunta(texto):
+    """Genera el bloque de texto con la pregunta de negocio."""
+    return html.Div([
+        html.P('Pregunta de negocio', style={'color': COLOR_ACENTO, 'fontSize': '12px',
+                                             'textTransform': 'uppercase', 'margin': '0 0 6px 0'}),
+        html.P(texto, style={'fontSize': '16px', 'color': COLOR_TEXTO, 'margin': 0})
+    ], style={**estilo_tarjeta, 'marginBottom': '20px'})
+
+
+def instrucciones(texto):
+    """Genera un bloque de instrucciones de uso."""
+    return html.Div([
+        html.Span('ℹ️  ', style={'fontSize': '16px'}),
+        html.Span(texto, style={'color': COLOR_SUBTEXTO, 'fontSize': '14px'})
+    ], style={'marginBottom': '20px', 'padding': '12px 16px',
+              'backgroundColor': '#1a2a2a', 'borderRadius': '8px',
+              'borderLeft': f'3px solid {COLOR_ACENTO}'})
+
+
+def placeholder_modelo(nombre_responsable, pregunta):
+    """Muestra un placeholder para modelos aún no integrados."""
+    return html.Div([
+        html.Div('⏳', style={'fontSize': '48px', 'textAlign': 'center', 'marginBottom': '16px'}),
+        html.H3(f'Modelo en desarrollo', style={'textAlign': 'center', 'color': COLOR_ACENTO}),
+        html.P(pregunta, style={'textAlign': 'center', 'color': COLOR_SUBTEXTO,
+                                'maxWidth': '600px', 'margin': '0 auto 16px auto'}),
+        html.P(f'Responsable: {nombre_responsable}',
+               style={'textAlign': 'center', 'color': COLOR_SUBTEXTO, 'fontSize': '13px'})
+    ], style={**estilo_tarjeta, 'padding': '60px 24px'})
