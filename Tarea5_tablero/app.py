@@ -210,50 +210,52 @@ app.index_string = '''
         <title>{%title%}</title>
         {%favicon%}
         {%css%}
-        <style>
-            .Select-control {
+       <style>
+            body { background-color: #0d0f1a !important; }
+
+            /* React-Select v5 — Dash 4.x */
+            div[class$="-control"] {
                 background-color: #1a2340 !important;
                 border-color: #00d4ff !important;
-                color: #ffffff !important;
             }
-            .Select-value-label {
-                color: #ffffff !important;
-                font-size: 14px !important;
-                font-weight: 500 !important;
-            }
-            .Select-placeholder {
+            div[class$="-singleValue"] {
                 color: #ffffff !important;
                 font-size: 14px !important;
             }
-            .Select-input input {
+            div[class$="-placeholder"] {
+                color: #cccccc !important;
+                font-size: 14px !important;
+            }
+            div[class$="-Input"] input {
                 color: #ffffff !important;
             }
-            .Select-single-value {
-                color: #ffffff !important;
-            }
-            .Select-menu-outer {
+            div[class$="-menu"] {
                 background-color: #111827 !important;
-                border-color: #00d4ff !important;
+                border: 1px solid #00d4ff !important;
                 z-index: 9999 !important;
             }
-            .Select-option {
+            div[class$="-option"] {
                 background-color: #111827 !important;
                 color: #ffffff !important;
-                font-size: 13px !important;
+                font-size: 14px !important;
             }
-            .Select-option:hover, .Select-option.is-focused {
+            div[class$="-option"]:hover {
                 background-color: #1a2340 !important;
                 color: #00d4ff !important;
             }
-            .Select-option.is-selected {
-                background-color: #00d4ff !important;
-                color: #000000 !important;
+            div[class$="-MenuList"] {
+                background-color: #111827 !important;
             }
-            .Select-arrow {
-                border-color: #00d4ff transparent transparent !important;
+            div[class$="-IndicatorsContainer"] svg {
+                fill: #00d4ff !important;
             }
+            div[class$="-ValueContainer"] {
+                color: #ffffff !important;
+            }
+
+            /* Tabs */
             .dash-tab {
-                background-color: #16213e !important;
+                background-color: #111827 !important;
                 color: #9aa5b4 !important;
                 border: 1px solid #0f3460 !important;
             }
@@ -261,24 +263,6 @@ app.index_string = '''
                 background-color: #0f3460 !important;
                 color: #00d4ff !important;
                 border-bottom: 2px solid #00d4ff !important;
-            }
-            body {
-                background-color: #1a1a2e !important;
-            }
-            .Select--single .Select-value {
-                color: #ffffff !important;
-            }
-            .Select--single .Select-value-label {
-                color: #ffffff !important;
-                font-size: 14px !important;
-            }
-            .VirtualizedSelectOption {
-                background-color: #111827 !important;
-                color: #ffffff !important;
-            }
-            .VirtualizedSelectFocusedOption {
-                background-color: #1a2340 !important;
-                color: #00d4ff !important;
             }
         </style>
     </head>
@@ -302,7 +286,7 @@ app.layout = html.Div([
                     'margin': '0 0 6px 0', 'fontWeight': 'bold',
                     'textAlign': 'center'}),
         html.P('Secretaría de Educación del Huila · Proyecto 2 · 2026',
-            style={'color': COLOR_SUBTEXTO, 'fontSize': '15px',
+            style={'color': COLOR_SUBTEXTO, 'fontSize': '17px',
                     'margin': '0 0 6px 0', 'textAlign': 'center'}),
         html.P(id='reloj',
             style={'color': COLOR_ACENTO, 'fontSize': '12px',
