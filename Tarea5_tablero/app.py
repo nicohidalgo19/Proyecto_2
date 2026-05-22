@@ -128,14 +128,12 @@ estilo_label = {
 
 estilo_dropdown = {
     'marginBottom': '12px',
-    'backgroundColor': '#0f3460',
+    'backgroundColor': '#1a2340',
 }
 
 estilo_tarjeta = {
-    'backgroundColor': ESTILO_TARJETA,
-    'border': f'1px solid {ESTILO_BORDE}',
-    'borderRadius': '12px',
-    'padding': '24px',
+    'color': '#ffffff',
+    'backgroundColor': '#1a2340',
 }
 
 # =============================================================================
@@ -264,6 +262,30 @@ app.index_string = '''
                 color: #00d4ff !important;
                 border-bottom: 2px solid #00d4ff !important;
             }
+            .custom-dropdown .Select-control,
+            .custom-dropdown .Select-value,
+            .custom-dropdown .Select-value-label,
+            .custom-dropdown input,
+            .custom-dropdown .Select-single-value,
+            .custom-dropdown [class*="singleValue"],
+            .custom-dropdown [class*="control"],
+            .custom-dropdown [class*="ValueContainer"] {
+                background-color: #1a2340 !important;
+                color: #ffffff !important;
+                font-size: 14px !important;
+            }
+            .custom-dropdown [class*="menu"],
+            .custom-dropdown [class*="MenuList"] {
+                background-color: #111827 !important;
+            }
+            .custom-dropdown [class*="option"] {
+                background-color: #111827 !important;
+                color: #ffffff !important;
+            }
+            .custom-dropdown [class*="option"]:hover {
+                background-color: #1a2340 !important;
+                color: #00d4ff !important;
+            }
         </style>
     </head>
     <body>
@@ -337,8 +359,18 @@ app.layout = html.Div([
                                 'letterSpacing': '1px'}),
 
                     html.Label('Estrato socioeconómico', style=estilo_label),
-                    dcc.Dropdown(id='reg-estrato', options=opciones_estrato,
-                                value=1, clearable=False, style=estilo_dropdown),
+                    dcc.Dropdown(
+                        id='reg-estrato',
+                        options=opciones_estrato,
+                        value=1,
+                        clearable=False,
+                        style={
+                            'marginBottom': '12px',
+                            'backgroundColor': '#1a2340',
+                            'color': '#ffffff',
+                        },
+                        className='custom-dropdown'
+                    ),
 
                     html.Label('Zona del colegio', style=estilo_label),
                     dcc.Dropdown(id='reg-zona', options=opciones_zona,
