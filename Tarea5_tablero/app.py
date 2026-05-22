@@ -37,9 +37,9 @@ municipio_encoder  = joblib.load('modelos/municipio_encoder.pkl')
 # scaler_X_clas2         = joblib.load('modelos/scaler_X_clasificacion_2.pkl')
 
 # ── Constantes del departamento (para contextualizar resultados) ───────────────
-PROMEDIO_HUILA    = 0  # Pendiente actualizar con el valor real
+PROMEDIO_HUILA    = 250  # Pendiente actualizar con el valor real
 MUNICIPIOS_COUNT  = 37 # Pendiente actualizar con el valor real
-ESTUDIANTES_COUNT = 0  # Pendiente actualizar con el valor real
+ESTUDIANTES_COUNT = 100  # Pendiente actualizar con el valor real
 
 # =============================================================================
 # 2. OPCIONES DE LOS FORMULARIOS
@@ -265,6 +265,21 @@ app.index_string = '''
             body {
                 background-color: #1a1a2e !important;
             }
+            .Select--single .Select-value {
+                color: #ffffff !important;
+            }
+            .Select--single .Select-value-label {
+                color: #ffffff !important;
+                font-size: 14px !important;
+            }
+            .VirtualizedSelectOption {
+                background-color: #111827 !important;
+                color: #ffffff !important;
+            }
+            .VirtualizedSelectFocusedOption {
+                background-color: #1a2340 !important;
+                color: #00d4ff !important;
+            }
         </style>
     </head>
     <body>
@@ -283,11 +298,11 @@ app.layout = html.Div([
     # ── Encabezado ──────────────────────────────────────────────────────────────
     html.Div([
         html.H1('Modelos Predictivos Saber 11 — Huila',
-                style={'color': COLOR_TEXTO, 'fontSize': '22px',
-                    'margin': '0 0 4px 0', 'fontWeight': 'bold',
+                style={'color': COLOR_TEXTO, 'fontSize': '32px',
+                    'margin': '0 0 6px 0', 'fontWeight': 'bold',
                     'textAlign': 'center'}),
         html.P('Secretaría de Educación del Huila · Proyecto 2 · 2026',
-            style={'color': COLOR_SUBTEXTO, 'fontSize': '12px',
+            style={'color': COLOR_SUBTEXTO, 'fontSize': '15px',
                     'margin': '0 0 6px 0', 'textAlign': 'center'}),
         html.P(id='reloj',
             style={'color': COLOR_ACENTO, 'fontSize': '12px',
@@ -420,9 +435,12 @@ app.layout = html.Div([
                                     'marginTop': '80px', 'fontSize': '14px'})
                     ]),
 
-                    dcc.Graph(id='gauge-regresion',
-                            config={'displayModeBar': False},
-                            style={'height': '250px', 'marginTop': '10px'}),
+                    # El gauge solo aparece después de predecir, empieza oculto
+                    html.Div(id='gauge-container', children=[
+                        dcc.Graph(id='gauge-regresion',
+                                config={'displayModeBar': False},
+                                style={'height': '250px', 'marginTop': '10px'})
+                    ], style={'display': 'none'}),
 
                     html.Div(id='interpretacion-regresion', style={'marginTop': '16px'})
 
@@ -497,6 +515,7 @@ app.layout = html.Div([
     Output('resultado-regresion',     'children'),
     Output('gauge-regresion',         'figure'),
     Output('interpretacion-regresion','children'),
+    Output('gauge-container',         'style'),
     Output('reg-estrato',             'value'),
     Output('reg-zona',                'value'),
     Output('reg-edu-madre',           'value'),
@@ -557,7 +576,8 @@ def manejar_formulario(n_predecir, n_limpiar,
     # ── Si se presionó Limpiar ─────────────────────────────────────────────────
     ctx = dash.callback_context
     if ctx.triggered[0]['prop_id'] == 'btn-limpiar-reg.n_clicks':
-        return (mensaje_vacio, figura_vacia, html.Div(), *defaults)
+        return (mensaje_vacio, figura_vacia, html.Div(),
+        {'display': 'none'}, *defaults)
 
     # ── Si se presionó Predecir ────────────────────────────────────────────────
     jornada_mañana   = 1 if jornada == 'MAÑANA'   else 0
@@ -649,8 +669,9 @@ def manejar_formulario(n_predecir, n_limpiar,
 
     # Retorna resultado + valores actuales del formulario sin cambio
     return (resultado_div, gauge, interpretacion_div,
-            estrato, zona, edu_madre, edu_padre, jornada,
-            municipio, internet, computador, naturaleza, genero)
+        {'display': 'block'},
+        estrato, zona, edu_madre, edu_padre, jornada,
+        municipio, internet, computador, naturaleza, genero)
 
 @app.callback(
     Output('reloj', 'children'),
