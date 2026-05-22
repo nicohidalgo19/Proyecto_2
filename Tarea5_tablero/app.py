@@ -36,3 +36,7 @@ municipio_encoder  = joblib.load('modelos/municipio_encoder.pkl')
 # modelo_clasificacion_2 = load_model('modelos/modelo_clasificacion_2.keras')
 # scaler_X_clas2         = joblib.load('modelos/scaler_X_clasificacion_2.pkl')
 
+# ── Constantes del departamento (para contextualizar resultados) ───────────────
+PROMEDIO_HUILA    = 0  # Pendiente actualizar con el valor real
+MUNICIPIOS_COUNT  = 37 # Pendiente actualizar con el valor real
+ESTUDIANTES_COUNT = 0  # Pendiente actualizar con el valor real
