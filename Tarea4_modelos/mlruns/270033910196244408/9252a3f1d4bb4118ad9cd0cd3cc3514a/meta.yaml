@@ -1,0 +1,15 @@
+artifact_uri: /Users/nicolashidalgo/Documents/ANDES/DÉCIMO SEMESTRE/Analítica computacional
+  para la toma de decisiones/Proyecto/Proyecto_2/Tarea4_modelos/mlruns/270033910196244408/9252a3f1d4bb4118ad9cd0cd3cc3514a/artifacts
+end_time: 1779418206687
+entry_point_name: ''
+experiment_id: '270033910196244408'
+lifecycle_stage: active
+run_id: 9252a3f1d4bb4118ad9cd0cd3cc3514a
+run_name: Modelo_Profundo
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779418134582
+status: 3
+tags: []
+user_id: nicolashidalgo

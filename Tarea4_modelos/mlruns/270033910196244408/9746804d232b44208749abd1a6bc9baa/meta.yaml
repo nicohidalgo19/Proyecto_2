@@ -1,0 +1,15 @@
+artifact_uri: /Users/nicolashidalgo/Documents/ANDES/DÉCIMO SEMESTRE/Analítica computacional
+  para la toma de decisiones/Proyecto/Proyecto_2/Tarea4_modelos/mlruns/270033910196244408/9746804d232b44208749abd1a6bc9baa/artifacts
+end_time: 1779418357363
+entry_point_name: ''
+experiment_id: '270033910196244408'
+lifecycle_stage: active
+run_id: 9746804d232b44208749abd1a6bc9baa
+run_name: Modelo_Simple_LR
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779418313611
+status: 3
+tags: []
+user_id: nicolashidalgo

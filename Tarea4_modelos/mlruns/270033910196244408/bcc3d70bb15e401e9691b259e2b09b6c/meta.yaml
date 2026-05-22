@@ -1,0 +1,15 @@
+artifact_uri: /Users/nicolashidalgo/Documents/ANDES/DÉCIMO SEMESTRE/Analítica computacional
+  para la toma de decisiones/Proyecto/Proyecto_2/Tarea4_modelos/mlruns/270033910196244408/bcc3d70bb15e401e9691b259e2b09b6c/artifacts
+end_time: 1779418313609
+entry_point_name: ''
+experiment_id: '270033910196244408'
+lifecycle_stage: active
+run_id: bcc3d70bb15e401e9691b259e2b09b6c
+run_name: Modelo_Dropout
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779418206689
+status: 3
+tags: []
+user_id: nicolashidalgo
