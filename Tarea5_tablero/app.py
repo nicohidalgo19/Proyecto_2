@@ -35,3 +35,4 @@ municipio_encoder  = joblib.load('modelos/municipio_encoder.pkl')
 # TODO: descomentar cuando el modelo esté listo
 # modelo_clasificacion_2 = load_model('modelos/modelo_clasificacion_2.keras')
 # scaler_X_clas2         = joblib.load('modelos/scaler_X_clasificacion_2.pkl')
+
