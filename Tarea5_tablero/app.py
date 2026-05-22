@@ -558,3 +558,9 @@ def predecir_regresion(n_clicks, estrato, zona, edu_madre, edu_padre,
 def limpiar_formulario(n_clicks):
     """Restaura todos los dropdowns del formulario a sus valores por defecto."""
     return 1, 1, 4, 4, 'MAÑANA', list(municipio_encoder.values())[0], 1, 1, 0, 1
+
+# =============================================================================
+# 7. EJECUCIÓN DEL SERVIDOR
+# =============================================================================
+if __name__ == '__main__':
+    app.run(debug=True)
