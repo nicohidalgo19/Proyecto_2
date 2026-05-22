@@ -111,31 +111,30 @@ opciones_municipio = [
 # 3. ESTILOS
 # =============================================================================
 
-ESTILO_FONDO     = '#121212'
-ESTILO_TARJETA   = '#1e1e1e'
-ESTILO_BORDE     = '#333333'
-COLOR_ACENTO     = '#00adb5'
-COLOR_TEXTO      = '#ffffff'
-COLOR_SUBTEXTO   = '#aaaaaa'
+ESTILO_FONDO     = '#1a1a2e'
+ESTILO_TARJETA   = '#16213e'
+ESTILO_BORDE     = '#0f3460'
+COLOR_ACENTO     = '#00d4ff'
+COLOR_TEXTO      = '#e0e0e0'
+COLOR_SUBTEXTO   = '#9aa5b4'
 
 estilo_label = {
     'color': COLOR_SUBTEXTO,
-    'fontSize': '13px',
-    'marginBottom': '4px',
-    'display': 'block'
+    'fontSize': '12px',
+    'marginBottom': '3px',
+    'display': 'block',
+    'fontWeight': '500'
 }
 
 estilo_dropdown = {
-    'backgroundColor': '#2a2a2a',
-    'color': COLOR_TEXTO,
-    'borderColor': ESTILO_BORDE,
-    'marginBottom': '14px'
+    'marginBottom': '12px',
+    'backgroundColor': '#0f3460',
 }
 
 estilo_tarjeta = {
     'backgroundColor': ESTILO_TARJETA,
     'border': f'1px solid {ESTILO_BORDE}',
-    'borderRadius': '10px',
+    'borderRadius': '12px',
     'padding': '24px',
 }
 
@@ -144,16 +143,27 @@ estilo_tarjeta = {
 # =============================================================================
 
 def kpi_card(valor, etiqueta):
-    """Genera una tarjeta KPI con valor destacado y etiqueta descriptiva."""
     return html.Div([
-        html.H2(valor, style={'color': COLOR_ACENTO, 'margin': '0', 'fontSize': '32px'}),
-        html.P(etiqueta, style={'color': COLOR_SUBTEXTO, 'margin': '4px 0 0 0', 'fontSize': '13px'})
+        html.P(valor, style={
+            'color': COLOR_ACENTO,
+            'margin': '0',
+            'fontSize': '22px',
+            'fontWeight': 'bold'
+        }),
+        html.P(etiqueta, style={
+            'color': COLOR_SUBTEXTO,
+            'margin': '2px 0 0 0',
+            'fontSize': '11px',
+            'textTransform': 'uppercase',
+            'letterSpacing': '0.5px'
+        })
     ], style={
         **estilo_tarjeta,
-        'width': '28%',
+        'width': '22%',
         'display': 'inline-block',
         'textAlign': 'center',
-        'margin': '0 2%'
+        'margin': '0 1.5%',
+        'padding': '14px 20px',
     })
 
 
