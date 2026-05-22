@@ -106,3 +106,35 @@ opciones_municipio = [
     {'label': mun, 'value': val}
     for mun, val in sorted(municipio_encoder.items(), key=lambda x: x[0])
 ]
+
+# =============================================================================
+# 3. ESTILOS
+# =============================================================================
+
+ESTILO_FONDO     = '#121212'
+ESTILO_TARJETA   = '#1e1e1e'
+ESTILO_BORDE     = '#333333'
+COLOR_ACENTO     = '#00adb5'
+COLOR_TEXTO      = '#ffffff'
+COLOR_SUBTEXTO   = '#aaaaaa'
+
+estilo_label = {
+    'color': COLOR_SUBTEXTO,
+    'fontSize': '13px',
+    'marginBottom': '4px',
+    'display': 'block'
+}
+
+estilo_dropdown = {
+    'backgroundColor': '#2a2a2a',
+    'color': COLOR_TEXTO,
+    'borderColor': ESTILO_BORDE,
+    'marginBottom': '14px'
+}
+
+estilo_tarjeta = {
+    'backgroundColor': ESTILO_TARJETA,
+    'border': f'1px solid {ESTILO_BORDE}',
+    'borderRadius': '10px',
+    'padding': '24px',
+}
