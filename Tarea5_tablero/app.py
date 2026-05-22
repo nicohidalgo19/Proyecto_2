@@ -203,6 +203,72 @@ def placeholder_modelo(nombre_responsable, pregunta):
 
 app = dash.Dash(__name__, title='Modelos Predictivos Saber 11 - Huila')
 
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+        <style>
+            .Select-control {
+                background-color: #0f3460 !important;
+                border-color: #00d4ff !important;
+                color: #e0e0e0 !important;
+            }
+            .Select-value-label {
+                color: #e0e0e0 !important;
+            }
+            .Select-placeholder {
+                color: #9aa5b4 !important;
+            }
+            .Select-menu-outer {
+                background-color: #16213e !important;
+                border-color: #0f3460 !important;
+                z-index: 9999 !important;
+            }
+            .Select-option {
+                background-color: #16213e !important;
+                color: #e0e0e0 !important;
+            }
+            .Select-option:hover, .Select-option.is-focused {
+                background-color: #0f3460 !important;
+                color: #00d4ff !important;
+            }
+            .Select-option.is-selected {
+                background-color: #00d4ff !important;
+                color: #000000 !important;
+            }
+            .Select-arrow {
+                border-color: #9aa5b4 transparent transparent !important;
+            }
+            .dash-tab {
+                background-color: #16213e !important;
+                color: #9aa5b4 !important;
+                border: 1px solid #0f3460 !important;
+            }
+            .dash-tab--selected {
+                background-color: #0f3460 !important;
+                color: #00d4ff !important;
+                border-bottom: 2px solid #00d4ff !important;
+            }
+            body {
+                background-color: #1a1a2e !important;
+            }
+        </style>
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
+
 app.layout = html.Div([
 
     # ── Encabezado ──────────────────────────────────────────────────────────────
@@ -245,121 +311,115 @@ app.layout = html.Div([
                 # ── Formulario + Resultado ──────────────────────────────────
                 html.Div([
 
-                    # Formulario de entrada
+                # Formulario de entrada
+                html.Div([
+                    html.H4('Perfil del Estudiante',
+                            style={'color': COLOR_ACENTO, 'marginBottom': '20px',
+                                'fontSize': '13px', 'textTransform': 'uppercase',
+                                'letterSpacing': '1px'}),
+
+                    html.Label('Estrato socioeconómico', style=estilo_label),
+                    dcc.Dropdown(id='reg-estrato', options=opciones_estrato,
+                                value=1, clearable=False, style=estilo_dropdown),
+
+                    html.Label('Zona del colegio', style=estilo_label),
+                    dcc.Dropdown(id='reg-zona', options=opciones_zona,
+                                value=1, clearable=False, style=estilo_dropdown),
+
+                    html.Label('Nivel educativo de la madre', style=estilo_label),
+                    dcc.Dropdown(id='reg-edu-madre', options=opciones_educacion,
+                                value=4, clearable=False, style=estilo_dropdown),
+
+                    html.Label('Nivel educativo del padre', style=estilo_label),
+                    dcc.Dropdown(id='reg-edu-padre', options=opciones_educacion,
+                                value=4, clearable=False, style=estilo_dropdown),
+
+                    html.Label('Jornada escolar', style=estilo_label),
+                    dcc.Dropdown(id='reg-jornada', options=opciones_jornada,
+                                value='MAÑANA', clearable=False, style=estilo_dropdown),
+
+                    html.Label('Municipio', style=estilo_label),
+                    dcc.Dropdown(id='reg-municipio', options=opciones_municipio,
+                                value=list(municipio_encoder.values())[0],
+                                clearable=False, style=estilo_dropdown),
+
+                    html.Label('Acceso a internet en el hogar', style=estilo_label),
+                    dcc.Dropdown(id='reg-internet', options=opciones_internet,
+                                value=1, clearable=False, style=estilo_dropdown),
+
+                    html.Label('Acceso a computador en el hogar', style=estilo_label),
+                    dcc.Dropdown(id='reg-computador', options=opciones_computador,
+                                value=1, clearable=False, style=estilo_dropdown),
+
+                    html.Label('Naturaleza del colegio', style=estilo_label),
+                    dcc.Dropdown(id='reg-naturaleza', options=opciones_naturaleza,
+                                value=0, clearable=False, style=estilo_dropdown),
+
+                    html.Label('Género', style=estilo_label),
+                    dcc.Dropdown(id='reg-genero', options=opciones_genero,
+                                value=1, clearable=False, style=estilo_dropdown),
+
                     html.Div([
-                        html.H4('Perfil del Estudiante',
-                                style={'color': COLOR_ACENTO, 'marginBottom': '20px',
-                                       'fontSize': '15px', 'textTransform': 'uppercase',
-                                       'letterSpacing': '1px'}),
+                        html.Button('Predecir', id='btn-predecir-reg', style={
+                            'backgroundColor': COLOR_ACENTO,
+                            'color': '#000',
+                            'border': 'none',
+                            'padding': '12px 28px',
+                            'borderRadius': '6px',
+                            'cursor': 'pointer',
+                            'fontWeight': 'bold',
+                            'fontSize': '14px',
+                            'marginRight': '10px'
+                        }),
+                        html.Button('Limpiar', id='btn-limpiar-reg', style={
+                            'backgroundColor': 'transparent',
+                            'color': COLOR_SUBTEXTO,
+                            'border': f'1px solid {ESTILO_BORDE}',
+                            'padding': '12px 28px',
+                            'borderRadius': '6px',
+                            'cursor': 'pointer',
+                            'fontSize': '14px'
+                        }),
+                    ], style={'marginTop': '8px'})
 
-                        html.Label('Estrato socioeconómico', style=estilo_label),
-                        dcc.Dropdown(id='reg-estrato', options=opciones_estrato,
-                                     value=1, clearable=False,
-                                     style=estilo_dropdown),
+                ], style={
+                    **estilo_tarjeta,
+                    'flex': '0 0 380px',
+                    'minWidth': '300px',
+                }),
 
-                        html.Label('Zona del colegio', style=estilo_label),
-                        dcc.Dropdown(id='reg-zona', options=opciones_zona,
-                                     value=1, clearable=False,
-                                     style=estilo_dropdown),
+                # Panel de resultado
+                html.Div([
+                    html.H4('Resultado de la Predicción',
+                            style={'color': COLOR_ACENTO, 'marginBottom': '24px',
+                                'fontSize': '13px', 'textTransform': 'uppercase',
+                                'letterSpacing': '1px'}),
 
-                        html.Label('Nivel educativo de la madre', style=estilo_label),
-                        dcc.Dropdown(id='reg-edu-madre', options=opciones_educacion,
-                                     value=4, clearable=False,
-                                     style=estilo_dropdown),
+                    html.Div(id='resultado-regresion', children=[
+                        html.P('Complete el formulario y presione Predecir.',
+                            style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+                                    'marginTop': '80px', 'fontSize': '14px'})
+                    ]),
 
-                        html.Label('Nivel educativo del padre', style=estilo_label),
-                        dcc.Dropdown(id='reg-edu-padre', options=opciones_educacion,
-                                     value=4, clearable=False,
-                                     style=estilo_dropdown),
+                    dcc.Graph(id='gauge-regresion',
+                            config={'displayModeBar': False},
+                            style={'height': '250px', 'marginTop': '10px'}),
 
-                        html.Label('Jornada escolar', style=estilo_label),
-                        dcc.Dropdown(id='reg-jornada', options=opciones_jornada,
-                                     value='MAÑANA', clearable=False,
-                                     style=estilo_dropdown),
+                    html.Div(id='interpretacion-regresion', style={'marginTop': '16px'})
 
-                        html.Label('Municipio', style=estilo_label),
-                        dcc.Dropdown(id='reg-municipio', options=opciones_municipio,
-                                     value=list(municipio_encoder.values())[0],
-                                     clearable=False, style=estilo_dropdown),
+                ], style={
+                    **estilo_tarjeta,
+                    'flex': '1',
+                    'minWidth': '300px',
+                })
 
-                        html.Label('Acceso a internet en el hogar', style=estilo_label),
-                        dcc.Dropdown(id='reg-internet', options=opciones_internet,
-                                     value=1, clearable=False,
-                                     style=estilo_dropdown),
-
-                        html.Label('Acceso a computador en el hogar', style=estilo_label),
-                        dcc.Dropdown(id='reg-computador', options=opciones_computador,
-                                     value=1, clearable=False,
-                                     style=estilo_dropdown),
-
-                        html.Label('Naturaleza del colegio', style=estilo_label),
-                        dcc.Dropdown(id='reg-naturaleza', options=opciones_naturaleza,
-                                     value=0, clearable=False,
-                                     style=estilo_dropdown),
-
-                        html.Label('Género', style=estilo_label),
-                        dcc.Dropdown(id='reg-genero', options=opciones_genero,
-                                     value=1, clearable=False,
-                                     style=estilo_dropdown),
-
-                        # Botones
-                        html.Div([
-                            html.Button('Predecir', id='btn-predecir-reg',
-                                        style={
-                                            'backgroundColor': COLOR_ACENTO,
-                                            'color': '#000',
-                                            'border': 'none',
-                                            'padding': '12px 28px',
-                                            'borderRadius': '6px',
-                                            'cursor': 'pointer',
-                                            'fontWeight': 'bold',
-                                            'fontSize': '14px',
-                                            'marginRight': '10px'
-                                        }),
-                            html.Button('Limpiar', id='btn-limpiar-reg',
-                                        style={
-                                            'backgroundColor': 'transparent',
-                                            'color': COLOR_SUBTEXTO,
-                                            'border': f'1px solid {ESTILO_BORDE}',
-                                            'padding': '12px 28px',
-                                            'borderRadius': '6px',
-                                            'cursor': 'pointer',
-                                            'fontSize': '14px'
-                                        }),
-                        ], style={'marginTop': '8px'})
-
-                    ], style={**estilo_tarjeta, 'width': '38%',
-                              'display': 'inline-block', 'verticalAlign': 'top'}),
-
-                    # Panel de resultado
-                    html.Div([
-                        html.H4('Resultado de la Predicción',
-                                style={'color': COLOR_ACENTO, 'marginBottom': '24px',
-                                       'fontSize': '15px', 'textTransform': 'uppercase',
-                                       'letterSpacing': '1px'}),
-
-                        # Valor predicho
-                        html.Div(id='resultado-regresion', children=[
-                            html.P('Complete el formulario y presione Predecir.',
-                                   style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
-                                          'marginTop': '60px'})
-                        ]),
-
-                        # Gauge chart
-                        dcc.Graph(id='gauge-regresion',
-                                  config={'displayModeBar': False},
-                                  style={'height': '250px', 'marginTop': '10px'}),
-
-                        # Texto de interpretación
-                        html.Div(id='interpretacion-regresion',
-                                 style={'marginTop': '16px'})
-
-                    ], style={**estilo_tarjeta, 'width': '52%',
-                              'display': 'inline-block', 'verticalAlign': 'top',
-                              'marginLeft': '3%'})
-
-                ], style={'display': 'flex', 'alignItems': 'flex-start',
-                          'gap': '0', 'flexWrap': 'wrap'})
+            ], style={
+                'display': 'flex',
+                'flexDirection': 'row',
+                'gap': '20px',
+                'alignItems': 'flex-start',
+                'flexWrap': 'wrap'
+            })
 
             ], style={'padding': '20px'})
         ]),
