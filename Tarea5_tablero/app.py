@@ -111,8 +111,8 @@ opciones_municipio = [
 # 3. ESTILOS
 # =============================================================================
 
-ESTILO_FONDO     = '#1a1a2e'
-ESTILO_TARJETA   = '#16213e'
+ESTILO_FONDO  = '#0d0f1a'
+ESTILO_TARJETA = '#111827'
 ESTILO_BORDE     = '#0f3460'
 COLOR_ACENTO     = '#00d4ff'
 COLOR_TEXTO      = '#e0e0e0'
@@ -213,27 +213,32 @@ app.index_string = '''
         {%css%}
         <style>
             .Select-control {
-                background-color: #0f3460 !important;
+                background-color: #1a2340 !important;
                 border-color: #00d4ff !important;
-                color: #e0e0e0 !important;
+                color: #ffffff !important;
             }
             .Select-value-label {
-                color: #e0e0e0 !important;
+                color: #ffffff !important;
+                font-size: 13px !important;
             }
             .Select-placeholder {
-                color: #9aa5b4 !important;
+                color: #ffffff !important;
+            }
+            .Select-input input {
+                color: #ffffff !important;
             }
             .Select-menu-outer {
-                background-color: #16213e !important;
-                border-color: #0f3460 !important;
+                background-color: #111827 !important;
+                border-color: #00d4ff !important;
                 z-index: 9999 !important;
             }
             .Select-option {
-                background-color: #16213e !important;
-                color: #e0e0e0 !important;
+                background-color: #111827 !important;
+                color: #ffffff !important;
+                font-size: 13px !important;
             }
             .Select-option:hover, .Select-option.is-focused {
-                background-color: #0f3460 !important;
+                background-color: #1a2340 !important;
                 color: #00d4ff !important;
             }
             .Select-option.is-selected {
@@ -241,7 +246,7 @@ app.index_string = '''
                 color: #000000 !important;
             }
             .Select-arrow {
-                border-color: #9aa5b4 transparent transparent !important;
+                border-color: #00d4ff transparent transparent !important;
             }
             .dash-tab {
                 background-color: #16213e !important;
@@ -273,13 +278,31 @@ app.layout = html.Div([
 
     # ── Encabezado ──────────────────────────────────────────────────────────────
     html.Div([
+    html.Div([
         html.H1('Modelos Predictivos Saber 11 — Huila',
-                style={'textAlign': 'center', 'color': COLOR_TEXTO,
-                       'fontSize': '26px', 'margin': '0 0 4px 0'}),
+                style={'color': COLOR_TEXTO, 'fontSize': '22px',
+                       'margin': '0 0 4px 0', 'fontWeight': 'bold'}),
         html.P('Secretaría de Educación del Huila · Proyecto 2 · 2026',
-               style={'textAlign': 'center', 'color': COLOR_SUBTEXTO,
-                      'fontSize': '13px', 'margin': 0})
-    ], style={'marginBottom': '30px'}),
+               style={'color': COLOR_SUBTEXTO, 'fontSize': '12px', 'margin': 0})
+    ]),
+    html.Div([
+        html.P(id='reloj',
+               style={'color': COLOR_ACENTO, 'fontSize': '13px',
+                      'margin': 0, 'textAlign': 'right'}),
+        html.P('Universidad de los Andes',
+               style={'color': COLOR_SUBTEXTO, 'fontSize': '11px',
+                      'margin': '2px 0 0 0', 'textAlign': 'right'})
+    ])
+    ], style={
+    'display': 'flex',
+    'justifyContent': 'space-between',
+    'alignItems': 'center',
+    'marginBottom': '24px',
+    'paddingBottom': '16px',
+    'borderBottom': f'1px solid {ESTILO_BORDE}'
+    }),
+
+dcc.Interval(id='intervalo-reloj', interval=1000, n_intervals=0),
 
     # ── KPIs ────────────────────────────────────────────────────────────────────
     html.Div([
@@ -475,70 +498,95 @@ app.layout = html.Div([
 # =============================================================================
 
 @app.callback(
-    Output('resultado-regresion',    'children'),
-    Output('gauge-regresion',        'figure'),
+    Output('resultado-regresion',     'children'),
+    Output('gauge-regresion',         'figure'),
     Output('interpretacion-regresion','children'),
-    Input('btn-predecir-reg',        'n_clicks'),
-    State('reg-estrato',             'value'),
-    State('reg-zona',                'value'),
-    State('reg-edu-madre',           'value'),
-    State('reg-edu-padre',           'value'),
-    State('reg-jornada',             'value'),
-    State('reg-municipio',           'value'),
-    State('reg-internet',            'value'),
-    State('reg-computador',          'value'),
-    State('reg-naturaleza',          'value'),
-    State('reg-genero',              'value'),
+    Output('reg-estrato',             'value'),
+    Output('reg-zona',                'value'),
+    Output('reg-edu-madre',           'value'),
+    Output('reg-edu-padre',           'value'),
+    Output('reg-jornada',             'value'),
+    Output('reg-municipio',           'value'),
+    Output('reg-internet',            'value'),
+    Output('reg-computador',          'value'),
+    Output('reg-naturaleza',          'value'),
+    Output('reg-genero',              'value'),
+    Input('btn-predecir-reg',         'n_clicks'),
+    Input('btn-limpiar-reg',          'n_clicks'),
+    State('reg-estrato',              'value'),
+    State('reg-zona',                 'value'),
+    State('reg-edu-madre',            'value'),
+    State('reg-edu-padre',            'value'),
+    State('reg-jornada',              'value'),
+    State('reg-municipio',            'value'),
+    State('reg-internet',             'value'),
+    State('reg-computador',           'value'),
+    State('reg-naturaleza',           'value'),
+    State('reg-genero',               'value'),
     prevent_initial_call=True
 )
-def predecir_regresion(n_clicks, estrato, zona, edu_madre, edu_padre,
-                       jornada, municipio, internet, computador, naturaleza, genero):
-    """
-    Callback principal del modelo de regresión.
-    Toma los valores del formulario, construye el vector de features,
-    aplica el pipeline de transformación y retorna la predicción.
-    """
+def manejar_formulario(n_predecir, n_limpiar,
+                       estrato, zona, edu_madre, edu_padre,
+                       jornada, municipio, internet, computador,
+                       naturaleza, genero):
 
-    # ── Construcción del vector de features ───────────────────────────────────
-    # El orden debe coincidir exactamente con las columnas guardadas en la sección 7:
-    # ['estrato','area_colegio','educacion_madre','educacion_padre','municipio',
-    #  'tiene_internet','tiene_computador','naturaleza_colegio','genero',
-    #  'jornada_MAÑANA','jornada_NOCHE','jornada_SABATINA','jornada_TARDE','jornada_UNICA']
+    # Valores por defecto del formulario
+    defaults = (1, 1, 4, 4, 'MAÑANA',
+                list(municipio_encoder.values())[0], 1, 1, 0, 1)
 
-    jornada_mañana  = 1 if jornada == 'MAÑANA'   else 0
-    jornada_noche   = 1 if jornada == 'NOCHE'     else 0
-    jornada_sabatina= 1 if jornada == 'SABATINA'  else 0
-    jornada_tarde   = 1 if jornada == 'TARDE'     else 0
-    jornada_unica   = 1 if jornada == 'UNICA'     else 0
-    # COMPLETA es la categoría de referencia (drop_first=True): todos en 0
+    # Figura vacía para el gauge cuando no hay predicción
+    figura_vacia = go.Figure(go.Indicator(
+        mode='gauge',
+        value=0,
+        gauge={
+            'axis': {'range': [100, 500], 'tickcolor': COLOR_SUBTEXTO},
+            'bar': {'color': ESTILO_BORDE},
+            'bgcolor': ESTILO_TARJETA,
+            'steps': [
+                {'range': [100, 200], 'color': '#1a1a2e'},
+                {'range': [200, 300], 'color': '#1a1a2e'},
+                {'range': [300, 500], 'color': '#1a1a2e'},
+            ],
+        }
+    ))
+    figura_vacia.update_layout(
+        paper_bgcolor=ESTILO_TARJETA,
+        margin=dict(l=20, r=20, t=20, b=20),
+        height=220
+    )
+
+    mensaje_vacio = html.P(
+        'Complete el formulario y presione Predecir.',
+        style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+               'marginTop': '80px', 'fontSize': '14px'}
+    )
+
+    # ── Si se presionó Limpiar ─────────────────────────────────────────────────
+    ctx = dash.callback_context
+    if ctx.triggered[0]['prop_id'] == 'btn-limpiar-reg.n_clicks':
+        return (mensaje_vacio, figura_vacia, html.Div(), *defaults)
+
+    # ── Si se presionó Predecir ────────────────────────────────────────────────
+    jornada_mañana   = 1 if jornada == 'MAÑANA'   else 0
+    jornada_noche    = 1 if jornada == 'NOCHE'     else 0
+    jornada_sabatina = 1 if jornada == 'SABATINA'  else 0
+    jornada_tarde    = 1 if jornada == 'TARDE'     else 0
+    jornada_unica    = 1 if jornada == 'UNICA'     else 0
 
     features = np.array([[
-        estrato,
-        zona,
-        edu_madre,
-        edu_padre,
-        municipio,      # ya está en escala de target encoding
-        internet,
-        computador,
-        naturaleza,
-        genero,
-        jornada_mañana,
-        jornada_noche,
-        jornada_sabatina,
-        jornada_tarde,
-        jornada_unica
+        estrato, zona, edu_madre, edu_padre, municipio,
+        internet, computador, naturaleza, genero,
+        jornada_mañana, jornada_noche, jornada_sabatina,
+        jornada_tarde, jornada_unica
     ]])
 
-    # ── Pipeline de predicción ─────────────────────────────────────────────────
     features_scaled = scaler_X_reg.transform(features)
     pred_scaled     = modelo_regresion.predict(features_scaled, verbose=0).flatten()
     pred_real       = scaler_y_reg.inverse_transform(
                           pred_scaled.reshape(-1, 1)
                       ).flatten()[0]
-
     pred_real = round(float(pred_real), 1)
 
-    # ── Componente de valor predicho ──────────────────────────────────────────
     diferencia = pred_real - PROMEDIO_HUILA
     color_dif  = '#00c48c' if diferencia >= 0 else '#ff6b6b'
     signo      = '+' if diferencia >= 0 else ''
@@ -555,7 +603,6 @@ def predecir_regresion(n_clicks, estrato, zona, edu_madre, edu_padre,
                       'fontSize': '14px', 'margin': 0})
     ])
 
-    # ── Gauge chart ───────────────────────────────────────────────────────────
     gauge = go.Figure(go.Indicator(
         mode='gauge+number',
         value=pred_real,
@@ -566,7 +613,7 @@ def predecir_regresion(n_clicks, estrato, zona, edu_madre, edu_padre,
             'bar': {'color': COLOR_ACENTO},
             'bgcolor': ESTILO_TARJETA,
             'steps': [
-                {'range': [100, 200], 'color': '#3a1a1a'},
+                {'range': [100, 200], 'color': '#2a1a1a'},
                 {'range': [200, 300], 'color': '#1a2a1a'},
                 {'range': [300, 500], 'color': '#1a3a1a'},
             ],
@@ -584,50 +631,42 @@ def predecir_regresion(n_clicks, estrato, zona, edu_madre, edu_padre,
         height=220
     )
 
-    # ── Texto de interpretación ───────────────────────────────────────────────
     if pred_real >= PROMEDIO_HUILA + 20:
-        msg    = 'El estudiante presenta un perfil favorable. Se proyecta un desempeño destacado frente al promedio departamental.'
-        color  = '#00c48c'
-        icono  = '✅'
+        msg   = 'El estudiante presenta un perfil favorable. Se proyecta un desempeño destacado frente al promedio departamental.'
+        color = '#00c48c'
+        icono = '✅'
     elif pred_real >= PROMEDIO_HUILA:
-        msg    = 'El estudiante se proyecta por encima del promedio departamental. Condiciones socioeconómicas adecuadas para un desempeño satisfactorio.'
-        color  = '#00adb5'
-        icono  = '📊'
+        msg   = 'El estudiante se proyecta por encima del promedio departamental. Condiciones socioeconómicas adecuadas para un desempeño satisfactorio.'
+        color = COLOR_ACENTO
+        icono = '📊'
     elif pred_real >= PROMEDIO_HUILA - 20:
-        msg    = 'El estudiante se proyecta ligeramente por debajo del promedio. Se recomienda seguimiento y apoyo pedagógico focalizado.'
-        color  = '#ffcc00'
-        icono  = '⚠️'
+        msg   = 'El estudiante se proyecta ligeramente por debajo del promedio. Se recomienda seguimiento y apoyo pedagógico focalizado.'
+        color = '#ffcc00'
+        icono = '⚠️'
     else:
-        msg    = 'El perfil del estudiante indica alto riesgo de bajo rendimiento. Se recomienda priorizar intervención temprana por parte de la Secretaría.'
-        color  = '#ff6b6b'
-        icono  = '🔴'
+        msg   = 'El perfil del estudiante indica alto riesgo de bajo rendimiento. Se recomienda priorizar intervención temprana.'
+        color = '#ff6b6b'
+        icono = '🔴'
 
     interpretacion_div = html.Div([
-        html.Span(f'{icono}  ', style={'fontSize': '16px'}),
+        html.Span(f'{icono}  '),
         html.Span(msg, style={'color': COLOR_SUBTEXTO, 'fontSize': '14px'})
-    ], style={'padding': '12px 16px', 'backgroundColor': '#1a1a1a',
+    ], style={'padding': '12px 16px', 'backgroundColor': '#0d0f1a',
               'borderRadius': '8px', 'borderLeft': f'3px solid {color}'})
 
-    return resultado_div, gauge, interpretacion_div
-
+    # Retorna resultado + valores actuales del formulario sin cambio
+    return (resultado_div, gauge, interpretacion_div,
+            estrato, zona, edu_madre, edu_padre, jornada,
+            municipio, internet, computador, naturaleza, genero)
 
 @app.callback(
-    Output('reg-estrato',    'value'),
-    Output('reg-zona',       'value'),
-    Output('reg-edu-madre',  'value'),
-    Output('reg-edu-padre',  'value'),
-    Output('reg-jornada',    'value'),
-    Output('reg-municipio',  'value'),
-    Output('reg-internet',   'value'),
-    Output('reg-computador', 'value'),
-    Output('reg-naturaleza', 'value'),
-    Output('reg-genero',     'value'),
-    Input('btn-limpiar-reg', 'n_clicks'),
-    prevent_initial_call=True
+    Output('reloj', 'children'),
+    Input('intervalo-reloj', 'n_intervals')
 )
-def limpiar_formulario(n_clicks):
-    """Restaura todos los dropdowns del formulario a sus valores por defecto."""
-    return 1, 1, 4, 4, 'MAÑANA', list(municipio_encoder.values())[0], 1, 1, 0, 1
+def actualizar_reloj(n):
+    from datetime import datetime
+    ahora = datetime.now()
+    return ahora.strftime('%A %d de %B de %Y  |  %H:%M:%S')
 
 # =============================================================================
 # 7. EJECUCIÓN DEL SERVIDOR
