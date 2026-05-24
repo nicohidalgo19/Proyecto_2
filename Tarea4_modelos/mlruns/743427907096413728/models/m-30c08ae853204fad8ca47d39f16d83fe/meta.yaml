@@ -1,0 +1,11 @@
+artifact_location: file:c:/Users/juans/OneDrive - Universidad de los andes/8 semestre/Analitica/Proyectos/Proyecto
+  2/Proyecto_2/Tarea4_modelos/mlruns/743427907096413728/models/m-30c08ae853204fad8ca47d39f16d83fe/artifacts
+creation_timestamp: 1779660443500
+experiment_id: '743427907096413728'
+last_updated_timestamp: 1779660450284
+model_id: m-30c08ae853204fad8ca47d39f16d83fe
+model_type: null
+name: model
+source_run_id: 29c0faaca7854502a6a3e34b9374436d
+status: 2
+status_message: null

@@ -1,0 +1,15 @@
+artifact_uri: file:c:/Users/juans/OneDrive - Universidad de los andes/8 semestre/Analitica/Proyectos/Proyecto
+  2/Proyecto_2/Tarea4_modelos/mlruns/743427907096413728/d53c861dc78f409d9e398d200094c6b1/artifacts
+end_time: 1779660557418
+entry_point_name: ''
+experiment_id: '743427907096413728'
+lifecycle_stage: active
+run_id: d53c861dc78f409d9e398d200094c6b1
+run_name: Modelo_Simple_LR_Bajo_Clf
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779660501936
+status: 3
+tags: []
+user_id: juans

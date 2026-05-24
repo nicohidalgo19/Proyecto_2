@@ -1,0 +1,21 @@
+artifact_path: file:c:/Users/juans/OneDrive - Universidad de los andes/8 semestre/Analitica/Proyectos/Proyecto
+  2/Proyecto_2/Tarea4_modelos/mlruns/743427907096413728/models/m-30c08ae853204fad8ca47d39f16d83fe/artifacts
+flavors:
+  keras:
+    data: data
+    keras_backend: tensorflow
+    keras_version: 3.13.2
+    save_exported_model: false
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.keras
+    python_version: 3.12.9
+mlflow_version: 3.12.0
+model_id: m-30c08ae853204fad8ca47d39f16d83fe
+model_size_bytes: 69885
+model_uuid: m-30c08ae853204fad8ca47d39f16d83fe
+prompts: null
+run_id: 29c0faaca7854502a6a3e34b9374436d
+utc_time_created: '2026-05-24 22:07:23.566022'

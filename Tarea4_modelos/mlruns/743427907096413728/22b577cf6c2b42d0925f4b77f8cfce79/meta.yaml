@@ -1,0 +1,15 @@
+artifact_uri: file:c:/Users/juans/OneDrive - Universidad de los andes/8 semestre/Analitica/Proyectos/Proyecto
+  2/Proyecto_2/Tarea4_modelos/mlruns/743427907096413728/22b577cf6c2b42d0925f4b77f8cfce79/artifacts
+end_time: 1779660501936
+entry_point_name: ''
+experiment_id: '743427907096413728'
+lifecycle_stage: active
+run_id: 22b577cf6c2b42d0925f4b77f8cfce79
+run_name: Modelo_Dropout_Clf
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779660450306
+status: 3
+tags: []
+user_id: juans
