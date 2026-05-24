@@ -32,8 +32,10 @@ municipio_encoder = joblib.load(os.path.join(MODELOS_DIR, 'municipio_encoder.pkl
 # scaler_X_clas1         = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_clasificacion_1.pkl'))
 
 # Pregunta Sebastián
-# modelo_clasificacion_2 = load_model(os.path.join(MODELOS_DIR, 'modelo_clasificacion_2.keras'))
-# scaler_X_clas2         = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_clasificacion_2.pkl'))
+modelo_clasificacion_jornada  = load_model(os.path.join(MODELOS_DIR, 'modelo_clasificacion.keras'))
+scaler_X_jornada              = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_clasificacion.pkl'))
+municipio_encoder_jornada     = joblib.load(os.path.join(MODELOS_DIR, 'municipio_encoder_clf.pkl'))
+feature_columns_jornada       = joblib.load(os.path.join(MODELOS_DIR, 'feature_columns_clf.pkl'))
 
 # Actualizar con valores reales del dataset
 PROMEDIO_HUILA    = 250.0
@@ -85,6 +87,11 @@ opciones_jornada = [
 opciones_municipio = [
     {'label': mun, 'value': val}
     for mun, val in sorted(municipio_encoder.items(), key=lambda x: x[0])
+]
+
+opciones_municipio_jornada = [
+    {'label': mun, 'value': val}
+    for mun, val in sorted(municipio_encoder_jornada.items(), key=lambda x: x[0])
 ]
 
 # =============================================================================
@@ -445,20 +452,102 @@ app.layout = html.Div([
                 )
             ], style={'padding': '20px'})
         ]),
-
         # ══════════════════════════════════════════════════════════════════════
         # PESTAÑA 3 — Clasificación jornada vulnerable (Sebastián)
         # ══════════════════════════════════════════════════════════════════════
         dcc.Tab(label='Pregunta 3 — Jornada Vulnerable', value='tab-3', children=[
             html.Div([
+
                 seccion_pregunta(
-                    '¿Es posible predecir si un estudiante asiste a jornada nocturna o sabatina '
-                    'a partir de su perfil socioeconómico y municipio?'
+                    '¿Es posible predecir si un estudiante asiste a jornada no convencional '
+                    '(nocturna o sabatina) a partir de su perfil socioeconómico y municipio?'
                 ),
-                placeholder_modelo(
-                    'Juan Sebastián Méndez Martínez',
-                    'Modelo de clasificación binaria: jornada regular / jornada nocturna o sabatina.'
-                )
+
+                instrucciones(
+                    'Complete el perfil socioeconómico del estudiante y presione "Predecir". '
+                    'El modelo estimará la probabilidad de que el estudiante asista a una '
+                    'jornada no convencional (nocturna o sabatina).'
+                ),
+
+                html.Div([
+
+                    # ── Formulario ─────────────────────────────────────────
+                    html.Div([
+                        html.H4('Perfil del Estudiante',
+                                style={'color': COLOR_ACENTO, 'marginBottom': '20px',
+                                        'fontSize': '13px', 'textTransform': 'uppercase',
+                                        'letterSpacing': '1px'}),
+
+                        html.Label('Estrato socioeconómico', style=estilo_label),
+                        dropdown('clf-estrato', opciones_estrato, 1),
+
+                        html.Label('Zona del colegio', style=estilo_label),
+                        dropdown('clf-zona', opciones_zona, 1),
+
+                        html.Label('Nivel educativo de la madre', style=estilo_label),
+                        dropdown('clf-edu-madre', opciones_educacion, 4),
+
+                        html.Label('Nivel educativo del padre', style=estilo_label),
+                        dropdown('clf-edu-padre', opciones_educacion, 4),
+
+                        html.Label('Municipio', style=estilo_label),
+                        dropdown('clf-municipio', opciones_municipio_jornada,
+                                list(municipio_encoder_jornada.values())[0]),
+
+                        html.Label('Acceso a internet en el hogar', style=estilo_label),
+                        dropdown('clf-internet', opciones_internet, 1),
+
+                        html.Label('Acceso a computador en el hogar', style=estilo_label),
+                        dropdown('clf-computador', opciones_computador, 1),
+
+                        html.Label('Naturaleza del colegio', style=estilo_label),
+                        dropdown('clf-naturaleza', opciones_naturaleza, 0),
+
+                        html.Label('Género', style=estilo_label),
+                        dropdown('clf-genero', opciones_genero, 1),
+
+                        html.Div([
+                            html.Button('Predecir', id='btn-predecir-clf', style={
+                                'backgroundColor': COLOR_ACENTO, 'color': '#000',
+                                'border': 'none', 'padding': '12px 28px',
+                                'borderRadius': '6px', 'cursor': 'pointer',
+                                'fontWeight': 'bold', 'fontSize': '14px',
+                                'marginRight': '10px'
+                            }),
+                            html.Button('Limpiar', id='btn-limpiar-clf', style={
+                                'backgroundColor': 'transparent', 'color': COLOR_SUBTEXTO,
+                                'border': f'1px solid {ESTILO_BORDE}', 'padding': '12px 28px',
+                                'borderRadius': '6px', 'cursor': 'pointer', 'fontSize': '14px'
+                            }),
+                        ], style={'marginTop': '8px'})
+
+                    ], style={**estilo_tarjeta, 'flex': '0 0 380px', 'minWidth': '300px'}),
+
+                    # ── Panel de resultado ──────────────────────────────────
+                     html.Div([
+                        html.H4('Resultado de la Predicción',
+                                style={'color': COLOR_ACENTO, 'marginBottom': '24px',
+                                    'fontSize': '13px', 'textTransform': 'uppercase',
+                                    'letterSpacing': '1px'}),
+
+                        html.Div(id='resultado-clasificacion', children=[
+                            html.P('Complete el formulario y presione Predecir.',
+                                style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+                                        'marginTop': '80px', 'fontSize': '14px'})
+                        ]),
+
+                        html.Div(id='gauge-container-clf', children=[
+                            dcc.Graph(id='gauge-clasificacion',
+                                    config={'displayModeBar': False},
+                                    style={'height': '250px', 'marginTop': '10px'})
+                        ], style={'display': 'none'}),
+
+                        html.Div(id='interpretacion-clasificacion',style={'marginTop': '16px'})
+                    ], style={**estilo_tarjeta, 'flex': '1', 'minWidth': '300px'})
+
+                ], style={'display': 'flex', 'flexDirection': 'row',
+                        'gap': '20px', 'alignItems': 'flex-start', 'flexWrap': 'wrap'})
+
             ], style={'padding': '20px'})
         ]),
 
@@ -605,6 +694,150 @@ def manejar_formulario(n_predecir, n_limpiar,
             estrato, zona, edu_madre, edu_padre, jornada,
             municipio, internet, computador, naturaleza, genero)
 
+@app.callback(
+    Output('resultado-clasificacion',      'children'),
+    Output('gauge-clasificacion',          'figure'),
+    Output('interpretacion-clasificacion', 'children'),
+    Output('gauge-container-clf',          'style'),
+    Output('clf-estrato',                  'value'),
+    Output('clf-zona',                     'value'),
+    Output('clf-edu-madre',                'value'),
+    Output('clf-edu-padre',                'value'),
+    Output('clf-municipio',                'value'),
+    Output('clf-internet',                 'value'),
+    Output('clf-computador',               'value'),
+    Output('clf-naturaleza',               'value'),
+    Output('clf-genero',                   'value'),
+    Input('btn-predecir-clf',              'n_clicks'),
+    Input('btn-limpiar-clf',               'n_clicks'),
+    State('clf-estrato',                   'value'),
+    State('clf-zona',                      'value'),
+    State('clf-edu-madre',                 'value'),
+    State('clf-edu-padre',                 'value'),
+    State('clf-municipio',                 'value'),
+    State('clf-internet',                  'value'),
+    State('clf-computador',                'value'),
+    State('clf-naturaleza',                'value'),
+    State('clf-genero',                    'value'),
+    prevent_initial_call=True
+)
+def manejar_formulario_clf(n_predecir, n_limpiar,
+                            estrato, zona, edu_madre, edu_padre,
+                            municipio, internet, computador,
+                            naturaleza, genero):
+
+    defaults = (1, 1, 4, 4,
+                list(municipio_encoder_jornada.values())[0],
+                1, 1, 0, 1)
+
+    figura_vacia = go.Figure()
+    figura_vacia.update_layout(
+        paper_bgcolor=ESTILO_TARJETA, plot_bgcolor=ESTILO_TARJETA,
+        margin=dict(l=20, r=20, t=20, b=20), height=220,
+        xaxis={'visible': False}, yaxis={'visible': False}
+    )
+
+    mensaje_vacio = html.P(
+        'Complete el formulario y presione Predecir.',
+        style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+               'marginTop': '80px', 'fontSize': '14px'}
+    )
+
+    # ── Limpiar ───────────────────────────────────────────────────────
+    ctx = dash.callback_context
+    if ctx.triggered[0]['prop_id'] == 'btn-limpiar-clf.n_clicks':
+        return (mensaje_vacio, figura_vacia, html.Div(),
+                {'display': 'none'}, *defaults)
+
+    # ── Predecir ──────────────────────────────────────────────────────
+    # Construir vector en el mismo orden que feature_columns_jornada:
+    # ['estrato', 'area_colegio', 'educacion_madre', 'educacion_padre',
+    #  'municipio', 'tiene_internet', 'tiene_computador',
+    #  'naturaleza_colegio', 'genero']
+    features = np.array([[
+        estrato, zona, edu_madre, edu_padre,
+        municipio, internet, computador, naturaleza, genero
+    ]])
+
+    features_scaled = scaler_X_jornada.transform(features)
+    probabilidad    = float(
+        modelo_clasificacion_jornada.predict(features_scaled, verbose=0).flatten()[0]
+    )
+    prediccion      = int(probabilidad >= 0.5)
+    porcentaje      = round(probabilidad * 100, 1)
+
+    # ── Resultado principal ───────────────────────────────────────────
+    etiqueta  = 'Jornada No Convencional' if prediccion == 1 else 'Jornada Convencional'
+    color_res = '#ff6b6b' if prediccion == 1 else '#00c48c'
+
+    resultado_div = html.Div([
+        html.P('Clasificación Estimada',
+               style={'color': COLOR_SUBTEXTO, 'fontSize': '13px',
+                      'textAlign': 'center', 'margin': '0 0 8px 0'}),
+        html.H2(etiqueta,
+                style={'color': color_res, 'fontSize': '36px',
+                       'textAlign': 'center', 'margin': '0 0 8px 0'}),
+        html.P(f'Probabilidad de jornada no convencional: {porcentaje}%',
+               style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+                      'fontSize': '14px', 'margin': 0})
+    ])
+
+    # ── Gauge de probabilidad (0% a 100%) ─────────────────────────────
+    gauge = go.Figure(go.Indicator(
+        mode='gauge+number',
+        value=porcentaje,
+        number={'suffix': '%', 'font': {'color': COLOR_TEXTO}},
+        gauge={
+            'axis': {'range': [0, 100], 'tickcolor': COLOR_SUBTEXTO,
+                     'tickfont': {'color': COLOR_SUBTEXTO}},
+            'bar': {'color': color_res},
+            'bgcolor': ESTILO_TARJETA,
+            'steps': [
+                {'range': [0,  50], 'color': '#1a3a1a'},
+                {'range': [50, 75], 'color': '#2a2a1a'},
+                {'range': [75, 100],'color': '#2a1a1a'},
+            ],
+            'threshold': {'line': {'color': '#ffcc00', 'width': 3},
+                          'thickness': 0.75, 'value': 50}
+        }
+    ))
+    gauge.update_layout(
+        paper_bgcolor=ESTILO_TARJETA, font={'color': COLOR_TEXTO},
+        margin=dict(l=20, r=20, t=20, b=20), height=220
+    )
+
+    # ── Interpretación ────────────────────────────────────────────────
+    if probabilidad < 0.30:
+        msg   = ('El perfil del estudiante es consistente con jornadas regulares. '
+                 'Baja probabilidad de asistir a jornada nocturna o sabatina.')
+        color = '#00c48c'
+        icono = '✅'
+    elif probabilidad < 0.50:
+        msg   = ('El estudiante presenta algunas características asociadas a jornadas '
+                 'no convencionales, pero el perfil predominante es de jornada regular.')
+        color = COLOR_ACENTO
+        icono = '📊'
+    elif probabilidad < 0.75:
+        msg   = ('El perfil socioeconómico sugiere una probabilidad moderada-alta de '
+                 'asistencia a jornada no convencional. Se recomienda verificación y seguimiento.')
+        color = '#ffcc00'
+        icono = '⚠️'
+    else:
+        msg   = ('El perfil del estudiante indica alta probabilidad de jornada no convencional '
+                 '(nocturna o sabatina). Se recomienda priorizar intervención de la Secretaría.')
+        color = '#ff6b6b'
+        icono = '🔴'
+
+    interpretacion_div = html.Div([
+        html.Span(f'{icono}  '),
+        html.Span(msg, style={'color': COLOR_SUBTEXTO, 'fontSize': '14px'})
+    ], style={'padding': '12px 16px', 'backgroundColor': '#0d0f1a',
+              'borderRadius': '8px', 'borderLeft': f'3px solid {color}'})
+
+    return (resultado_div, gauge, interpretacion_div,
+            {'display': 'block'},
+            estrato, zona, edu_madre, edu_padre,
+            municipio, internet, computador, naturaleza, genero)
 
 @app.callback(
     Output('reloj', 'children'),
