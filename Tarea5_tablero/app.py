@@ -41,7 +41,7 @@ feature_columns_jornada       = joblib.load(os.path.join(MODELOS_DIR, 'feature_c
 # Actualizar con valores reales del dataset
 PROMEDIO_HUILA    = 252.68
 MUNICIPIOS_COUNT  = 45
-ESTUDIANTES_COUNT = 105542
+ESTUDIANTES_COUNT = 111556
 
 # =============================================================================
 # 2. OPCIONES DE LOS FORMULARIOS
