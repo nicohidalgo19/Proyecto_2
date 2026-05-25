@@ -187,6 +187,8 @@ def dropdown(id_, opciones, valor):
 # =============================================================================
 
 app = dash.Dash(__name__, title='Modelos Predictivos Saber 11 - Huila')
+server = app.server
+
 
 app.index_string = '''
 <!DOCTYPE html>
