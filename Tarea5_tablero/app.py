@@ -443,16 +443,101 @@ app.layout = html.Div([
         # ══════════════════════════════════════════════════════════════════════
         dcc.Tab(label='Pregunta 2 — Riesgo Académico', value='tab-2', children=[
             html.Div([
+
                 seccion_pregunta(
                     '¿Un estudiante estará por debajo del promedio departamental dado su '
                     'perfil socioeconómico y municipio?'
                 ),
-                placeholder_modelo(
-                    'Gabriel Juan De Dios',
-                    'Modelo de clasificación binaria: bajo el promedio departamental / sobre el promedio.'
-                )
+
+                instrucciones(
+                    'Complete el perfil socioeconómico del estudiante y presione "Clasificar". '
+                    'El modelo estimará la probabilidad de que el estudiante se ubique por debajo '
+                    'del promedio departamental en la prueba Saber 11.'
+                ),
+
+                html.Div([
+
+                    # ── Formulario (sin jornada) ─────────────────────────────
+                    html.Div([
+                        html.H4('Perfil del Estudiante',
+                                style={'color': COLOR_ACENTO, 'marginBottom': '20px',
+                                       'fontSize': '13px', 'textTransform': 'uppercase',
+                                       'letterSpacing': '1px'}),
+
+                        html.Label('Estrato socioeconómico', style=estilo_label),
+                        dropdown('clas1-estrato', opciones_estrato, 1),
+
+                        html.Label('Zona del colegio', style=estilo_label),
+                        dropdown('clas1-zona', opciones_zona, 1),
+
+                        html.Label('Nivel educativo de la madre', style=estilo_label),
+                        dropdown('clas1-edu-madre', opciones_educacion, 4),
+
+                        html.Label('Nivel educativo del padre', style=estilo_label),
+                        dropdown('clas1-edu-padre', opciones_educacion, 4),
+
+                        html.Label('Acceso a internet en el hogar', style=estilo_label),
+                        dropdown('clas1-internet', opciones_internet, 1),
+
+                        html.Label('Acceso a computador en el hogar', style=estilo_label),
+                        dropdown('clas1-computador', opciones_computador, 1),
+
+                        html.Label('Naturaleza del colegio', style=estilo_label),
+                        dropdown('clas1-naturaleza', opciones_naturaleza, 0),
+
+                        html.Label('Género', style=estilo_label),
+                        dropdown('clas1-genero', opciones_genero, 1),
+
+                        html.Label('Municipio', style=estilo_label),
+                        dropdown('clas1-municipio', opciones_municipio,
+                                 list(municipio_encoder.values())[0]),
+
+                        html.Div([
+                            html.Button('Clasificar', id='btn-predecir-clas1', style={
+                                'backgroundColor': COLOR_ACENTO, 'color': '#000',
+                                'border': 'none', 'padding': '12px 28px',
+                                'borderRadius': '6px', 'cursor': 'pointer',
+                                'fontWeight': 'bold', 'fontSize': '14px',
+                                'marginRight': '10px'
+                            }),
+                            html.Button('Limpiar', id='btn-limpiar-clas1', style={
+                                'backgroundColor': 'transparent', 'color': COLOR_SUBTEXTO,
+                                'border': f'1px solid {ESTILO_BORDE}', 'padding': '12px 28px',
+                                'borderRadius': '6px', 'cursor': 'pointer', 'fontSize': '14px'
+                            }),
+                        ], style={'marginTop': '8px'})
+
+                    ], style={**estilo_tarjeta, 'flex': '0 0 380px', 'minWidth': '300px'}),
+
+                    # ── Panel de resultado ──────────────────────────────────
+                    html.Div([
+                        html.H4('Resultado de la Clasificación',
+                                style={'color': COLOR_ACENTO, 'marginBottom': '24px',
+                                       'fontSize': '13px', 'textTransform': 'uppercase',
+                                       'letterSpacing': '1px'}),
+
+                        html.Div(id='resultado-clas1', children=[
+                            html.P('Complete el formulario y presione Clasificar.',
+                                   style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+                                          'marginTop': '80px', 'fontSize': '14px'})
+                        ]),
+
+                        html.Div(id='gauge-container-clas1', children=[
+                            dcc.Graph(id='gauge-clas1',
+                                      config={'displayModeBar': False},
+                                      style={'height': '250px', 'marginTop': '10px'})
+                        ], style={'display': 'none'}),
+
+                        html.Div(id='interpretacion-clas1', style={'marginTop': '16px'})
+
+                    ], style={**estilo_tarjeta, 'flex': '1', 'minWidth': '300px'})
+
+                ], style={'display': 'flex', 'flexDirection': 'row',
+                          'gap': '20px', 'alignItems': 'flex-start', 'flexWrap': 'wrap'})
+
             ], style={'padding': '20px'})
         ]),
+        
         # ══════════════════════════════════════════════════════════════════════
         # PESTAÑA 3 — Clasificación jornada vulnerable (Sebastián)
         # ══════════════════════════════════════════════════════════════════════
