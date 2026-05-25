@@ -39,9 +39,9 @@ municipio_encoder_jornada     = joblib.load(os.path.join(MODELOS_DIR, 'municipio
 feature_columns_jornada       = joblib.load(os.path.join(MODELOS_DIR, 'feature_columns_clf.pkl'))
 
 # Actualizar con valores reales del dataset
-PROMEDIO_HUILA    = 250.0
-MUNICIPIOS_COUNT  = 37
-ESTUDIANTES_COUNT = 80283
+PROMEDIO_HUILA    = 252.68
+MUNICIPIOS_COUNT  = 45
+ESTUDIANTES_COUNT = 105542
 
 # =============================================================================
 # 2. OPCIONES DE LOS FORMULARIOS
