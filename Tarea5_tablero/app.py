@@ -750,10 +750,7 @@ def manejar_formulario_clf(n_predecir, n_limpiar,
                 {'display': 'none'}, *defaults)
 
     # ── Predecir ──────────────────────────────────────────────────────
-    # Construir vector en el mismo orden que feature_columns_jornada:
-    # ['estrato', 'area_colegio', 'educacion_madre', 'educacion_padre',
-    #  'municipio', 'tiene_internet', 'tiene_computador',
-    #  'naturaleza_colegio', 'genero']
+
     features = np.array([[
         estrato, zona, edu_madre, edu_padre,
         municipio, internet, computador, naturaleza, genero
@@ -782,7 +779,7 @@ def manejar_formulario_clf(n_predecir, n_limpiar,
                       'fontSize': '14px', 'margin': 0})
     ])
 
-    # ── Gauge de probabilidad (0% a 100%) ─────────────────────────────
+    # ── Gauge de probabilidad ─────────────────────────────
     gauge = go.Figure(go.Indicator(
         mode='gauge+number',
         value=porcentaje,
