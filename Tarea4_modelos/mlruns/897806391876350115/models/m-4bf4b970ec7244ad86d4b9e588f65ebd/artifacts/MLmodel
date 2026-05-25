@@ -1,0 +1,21 @@
+artifact_path: file:c:/Users/gabri/OneDrive/Documentos/GABRIEL/UNIVERSIDAD/8 SEMESTRE/ANALITICA/PROYECTO
+  2/Proyecto_2/Tarea4_modelos/mlruns/897806391876350115/models/m-4bf4b970ec7244ad86d4b9e588f65ebd/artifacts
+flavors:
+  keras:
+    data: data
+    keras_backend: tensorflow
+    keras_version: 3.13.2
+    save_exported_model: false
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.keras
+    python_version: 3.12.9
+mlflow_version: 3.12.0
+model_id: m-4bf4b970ec7244ad86d4b9e588f65ebd
+model_size_bytes: 35914
+model_uuid: m-4bf4b970ec7244ad86d4b9e588f65ebd
+prompts: null
+run_id: 29177241999e4e55936a3c13d892d4ad
+utc_time_created: '2026-05-25 01:19:17.005940'

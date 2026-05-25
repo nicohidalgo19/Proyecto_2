@@ -1,0 +1,11 @@
+artifact_location: file:c:/Users/gabri/OneDrive/Documentos/GABRIEL/UNIVERSIDAD/8 SEMESTRE/ANALITICA/PROYECTO
+  2/Proyecto_2/Tarea4_modelos/mlruns/897806391876350115/models/m-4bf4b970ec7244ad86d4b9e588f65ebd/artifacts
+creation_timestamp: 1779671956807
+experiment_id: '897806391876350115'
+last_updated_timestamp: 1779671969685
+model_id: m-4bf4b970ec7244ad86d4b9e588f65ebd
+model_type: null
+name: model
+source_run_id: 29177241999e4e55936a3c13d892d4ad
+status: 2
+status_message: null

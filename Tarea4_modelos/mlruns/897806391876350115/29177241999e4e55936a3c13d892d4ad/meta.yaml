@@ -1,0 +1,15 @@
+artifact_uri: file:c:/Users/gabri/OneDrive/Documentos/GABRIEL/UNIVERSIDAD/8 SEMESTRE/ANALITICA/PROYECTO
+  2/Proyecto_2/Tarea4_modelos/mlruns/897806391876350115/29177241999e4e55936a3c13d892d4ad/artifacts
+end_time: 1779671969719
+entry_point_name: ''
+experiment_id: '897806391876350115'
+lifecycle_stage: active
+run_id: 29177241999e4e55936a3c13d892d4ad
+run_name: Modelo_Simple_LR
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779671924016
+status: 3
+tags: []
+user_id: gabri
