@@ -537,7 +537,7 @@ app.layout = html.Div([
 
             ], style={'padding': '20px'})
         ]),
-        
+
         # ══════════════════════════════════════════════════════════════════════
         # PESTAÑA 3 — Clasificación jornada vulnerable (Sebastián)
         # ══════════════════════════════════════════════════════════════════════
@@ -646,6 +646,8 @@ app.layout = html.Div([
 # 7. CALLBACKS
 # =============================================================================
 
+
+#CALLBACKS NICOLAS
 @app.callback(
     Output('resultado-regresion',      'children'),
     Output('gauge-regresion',          'figure'),
@@ -780,6 +782,137 @@ def manejar_formulario(n_predecir, n_limpiar,
             estrato, zona, edu_madre, edu_padre, jornada,
             municipio, internet, computador, naturaleza, genero)
 
+
+#CALLBACKS GABRIEL
+@app.callback(
+    Output('resultado-clas1',      'children'),
+    Output('gauge-clas1',          'figure'),
+    Output('interpretacion-clas1', 'children'),
+    Output('gauge-container-clas1','style'),
+    Output('clas1-estrato',        'value'),
+    Output('clas1-zona',           'value'),
+    Output('clas1-edu-madre',      'value'),
+    Output('clas1-edu-padre',      'value'),
+    Output('clas1-internet',       'value'),
+    Output('clas1-computador',     'value'),
+    Output('clas1-naturaleza',     'value'),
+    Output('clas1-genero',         'value'),
+    Output('clas1-municipio',      'value'),
+    Input('btn-predecir-clas1',    'n_clicks'),
+    Input('btn-limpiar-clas1',     'n_clicks'),
+    State('clas1-estrato',         'value'),
+    State('clas1-zona',            'value'),
+    State('clas1-edu-madre',       'value'),
+    State('clas1-edu-padre',       'value'),
+    State('clas1-internet',        'value'),
+    State('clas1-computador',      'value'),
+    State('clas1-naturaleza',      'value'),
+    State('clas1-genero',          'value'),
+    State('clas1-municipio',       'value'),
+    prevent_initial_call=True
+)
+def manejar_formulario_clas1(n_predecir, n_limpiar,
+                             estrato, zona, edu_madre, edu_padre,
+                             internet, computador, naturaleza, genero, municipio):
+
+    defaults = (1, 1, 4, 4, 1, 1, 0, 1, list(municipio_encoder.values())[0])
+
+    figura_vacia = go.Figure()
+    figura_vacia.update_layout(
+        paper_bgcolor=ESTILO_TARJETA, plot_bgcolor=ESTILO_TARJETA,
+        margin=dict(l=20, r=20, t=20, b=20), height=220,
+        xaxis={'visible': False}, yaxis={'visible': False}
+    )
+
+    mensaje_vacio = html.P(
+        'Complete el formulario y presione Clasificar.',
+        style={'color': COLOR_SUBTEXTO, 'textAlign': 'center',
+               'marginTop': '80px', 'fontSize': '14px'}
+    )
+
+    ctx = dash.callback_context
+    if ctx.triggered[0]['prop_id'] == 'btn-limpiar-clas1.n_clicks':
+        return (mensaje_vacio, figura_vacia, html.Div(),
+                {'display': 'none'}, *defaults)
+
+    # Vector de features en el MISMO orden que feature_columns_clasificacion_1
+    features = np.array([[
+        estrato, zona, edu_madre, edu_padre,
+        internet, computador, naturaleza, genero, municipio
+    ]])
+
+    features_scaled = scaler_X_clas1.transform(features)
+    # El modelo devuelve la probabilidad de la clase 1 (bajo el promedio)
+    prob_bajo = float(modelo_clas1.predict(features_scaled, verbose=0).flatten()[0])
+    prob_pct  = round(prob_bajo * 100, 1)
+
+    # Clasificación con umbral 0.5
+    es_riesgo = prob_bajo >= 0.5
+
+    # ── Componente de resultado ───────────────────────────────────────────────
+    etiqueta   = 'BAJO EL PROMEDIO' if es_riesgo else 'SOBRE EL PROMEDIO'
+    color_clas = '#ff6b6b' if es_riesgo else '#00c48c'
+
+    resultado_div = html.Div([
+        html.P('Clasificación del Estudiante',
+               style={'color': COLOR_SUBTEXTO, 'fontSize': '13px',
+                      'textAlign': 'center', 'margin': '0 0 8px 0'}),
+        html.H2(etiqueta,
+                style={'color': color_clas, 'fontSize': '28px',
+                       'textAlign': 'center', 'margin': '0 0 8px 0', 'fontWeight': 'bold'}),
+        html.P(f'Probabilidad de estar bajo el promedio: {prob_pct}%',
+               style={'color': COLOR_TEXTO, 'textAlign': 'center',
+                      'fontSize': '14px', 'margin': 0})
+    ])
+
+    # ── Gauge de probabilidad (0 a 100%) ──────────────────────────────────────
+    gauge = go.Figure(go.Indicator(
+        mode='gauge+number',
+        value=prob_pct,
+        number={'suffix': ' %', 'font': {'color': COLOR_TEXTO}},
+        gauge={
+            'axis': {'range': [0, 100], 'tickcolor': COLOR_SUBTEXTO,
+                     'tickfont': {'color': COLOR_SUBTEXTO}},
+            'bar': {'color': color_clas},
+            'bgcolor': ESTILO_TARJETA,
+            'steps': [
+                {'range': [0, 50],   'color': '#1a3a1a'},
+                {'range': [50, 100], 'color': '#3a1a1a'},
+            ],
+            'threshold': {'line': {'color': '#ffcc00', 'width': 3},
+                          'thickness': 0.75, 'value': 50}
+        }
+    ))
+    gauge.update_layout(paper_bgcolor=ESTILO_TARJETA, font={'color': COLOR_TEXTO},
+                        margin=dict(l=20, r=20, t=20, b=20), height=220)
+
+    # ── Texto de interpretación ───────────────────────────────────────────────
+    if prob_bajo >= 0.75:
+        msg, color, icono = ('Alta probabilidad de desempeño bajo el promedio departamental. Se recomienda priorizar intervención y acompañamiento.',
+                             '#ff6b6b', '🔴')
+    elif prob_bajo >= 0.5:
+        msg, color, icono = ('El estudiante se clasifica en riesgo de quedar bajo el promedio. Se recomienda seguimiento focalizado.',
+                             '#ffcc00', '⚠️')
+    elif prob_bajo >= 0.25:
+        msg, color, icono = ('El estudiante se proyecta sobre el promedio departamental, aunque con margen de mejora.',
+                             COLOR_ACENTO, '📊')
+    else:
+        msg, color, icono = ('El estudiante presenta baja probabilidad de quedar bajo el promedio. Perfil favorable.',
+                             '#00c48c', '✅')
+
+    interpretacion_div = html.Div([
+        html.Span(f'{icono}  '),
+        html.Span(msg, style={'color': COLOR_SUBTEXTO, 'fontSize': '14px'})
+    ], style={'padding': '12px 16px', 'backgroundColor': '#0d0f1a',
+              'borderRadius': '8px', 'borderLeft': f'3px solid {color}'})
+
+    return (resultado_div, gauge, interpretacion_div,
+            {'display': 'block'},
+            estrato, zona, edu_madre, edu_padre,
+            internet, computador, naturaleza, genero, municipio)
+
+
+#CALLBACKS SEBASTIAN
 @app.callback(
     Output('resultado-clasificacion',      'children'),
     Output('gauge-clasificacion',          'figure'),
