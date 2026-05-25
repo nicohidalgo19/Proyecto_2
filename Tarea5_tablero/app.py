@@ -25,11 +25,12 @@ scaler_X_reg      = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_regresion.pk
 scaler_y_reg      = joblib.load(os.path.join(MODELOS_DIR, 'scaler_y_regresion.pkl'))
 municipio_encoder = joblib.load(os.path.join(MODELOS_DIR, 'municipio_encoder.pkl'))
 
-# TODO: descomentar cuando los modelos estén listos
 
 # Pregunta Gabriel
-# modelo_clasificacion_1 = load_model(os.path.join(MODELOS_DIR, 'modelo_clasificacion_1.keras'))
-# scaler_X_clas1         = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_clasificacion_1.pkl'))
+modelo_clas1          = load_model(os.path.join(MODELOS_DIR, 'modelo_clasificacion_1.keras'))
+scaler_X_clas1        = joblib.load(os.path.join(MODELOS_DIR, 'scaler_X_clasificacion_1.pkl'))
+feature_cols_clas1    = joblib.load(os.path.join(MODELOS_DIR, 'feature_columns_clasificacion_1.pkl'))
+promedio_departamental = joblib.load(os.path.join(MODELOS_DIR, 'promedio_departamental.pkl'))
 
 # Pregunta Sebastián
 modelo_clasificacion_jornada  = load_model(os.path.join(MODELOS_DIR, 'modelo_clasificacion.keras'))
