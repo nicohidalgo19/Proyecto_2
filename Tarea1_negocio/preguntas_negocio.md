@@ -32,30 +32,6 @@ Extiende y formaliza los hallazgos descriptivos del P1, donde se identificó que
 ---
 
 ## Pregunta 2
-**Responsable:** Gabriel Juan De Dios  
-**Rol:** Ciencia de Datos / Despliegue del tablero
-
-### ¿Un estudiante estará por debajo del promedio departamental dado su perfil socioeconómico y municipio?
-
-| Campo | Detalle |
-|---|---|
-| **Tipo de modelo** | Clasificación binaria con Red Neuronal (Keras / TensorFlow) |
-| **Variable objetivo (Y)** | `desempeno_bajo`: 1 = puntaje global < promedio departamental · 0 = igual o sobre el promedio |
-| **Variables predictoras (X)** | estrato, area_colegio, educacion_madre, educacion_padre, tiene_internet, tiene_computador, naturaleza_colegio, genero, municipio |
-| **Modelo seleccionado** | Modelo 2 con Dropout: Input → Dense(64, ReLU) → Dropout(30%) → Dense(32, ReLU) → Dropout(30%) → Dense(16, ReLU) → Output(sigmoide) |
-| **Optimizador** | Adam (lr = 0.0001) |
-| **Métricas del modelo final** | Accuracy: 65.76% · Precision: 66.59% · Recall: 69.20% · F1: 67.87% · AUC-ROC: 71.48% |
-| **Experimento MLflow** | `Clasificacion_DesempenoBajo_Huila` |
-
-**Justificación para la Secretaría:**  
-El modelo convierte el índice de vulnerabilidad analizado en el P1 en una herramienta de clasificación de riesgo accionable. Al conocer la probabilidad de que un estudiante quede bajo el promedio, la Secretaría puede priorizar intervenciones en municipios y perfiles con mayor concentración de riesgo, maximizando el impacto de los recursos disponibles.
-
-**Conexión con el Proyecto 1:**  
-Formaliza y extiende el análisis de vulnerabilidad por municipio del P1 (diagrama de burbujas), transformando el índice descriptivo en un clasificador predictivo respaldado por una red neuronal.
-
----
-
-## Pregunta 3
 **Responsable:** Juan Sebastián Méndez Martínez  
 **Rol:** Ciencia de Datos / Despliegue y mantenimiento
 
@@ -76,6 +52,29 @@ Las jornadas nocturna y sabatina presentaron el peor rendimiento académico en e
 
 **Conexión con el Proyecto 1:**  
 Extiende el hallazgo del P1 sobre las disparidades estructurales por tipo de jornada, formalizando ese patrón descriptivo en un clasificador predictivo que puede usarse como herramienta de alerta temprana.
+---
+
+## Pregunta 3
+**Responsable:** Gabriel Juan De Dios  
+**Rol:** Ciencia de Datos / Despliegue del tablero
+
+### ¿Un estudiante estará por debajo del promedio departamental dado su perfil socioeconómico y municipio?
+
+| Campo | Detalle |
+|---|---|
+| **Tipo de modelo** | Clasificación binaria con Red Neuronal (Keras / TensorFlow) |
+| **Variable objetivo (Y)** | `desempeno_bajo`: 1 = puntaje global < promedio departamental · 0 = igual o sobre el promedio |
+| **Variables predictoras (X)** | estrato, area_colegio, educacion_madre, educacion_padre, tiene_internet, tiene_computador, naturaleza_colegio, genero, municipio |
+| **Modelo seleccionado** | Modelo 2 con Dropout: Input → Dense(64, ReLU) → Dropout(30%) → Dense(32, ReLU) → Dropout(30%) → Dense(16, ReLU) → Output(sigmoide) |
+| **Optimizador** | Adam (lr = 0.0001) |
+| **Métricas del modelo final** | Accuracy: 65.76% · Precision: 66.59% · Recall: 69.20% · F1: 67.87% · AUC-ROC: 71.48% |
+| **Experimento MLflow** | `Clasificacion_DesempenoBajo_Huila` |
+
+**Justificación para la Secretaría:**  
+El modelo convierte el índice de vulnerabilidad analizado en el P1 en una herramienta de clasificación de riesgo accionable. Al conocer la probabilidad de que un estudiante quede bajo el promedio, la Secretaría puede priorizar intervenciones en municipios y perfiles con mayor concentración de riesgo, maximizando el impacto de los recursos disponibles.
+
+**Conexión con el Proyecto 1:**  
+Formaliza y extiende el análisis de vulnerabilidad por municipio del P1 (diagrama de burbujas), transformando el índice descriptivo en un clasificador predictivo respaldado por una red neuronal.
 
 ---
 
